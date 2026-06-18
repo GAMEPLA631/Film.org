@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="sk" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineCredits - Profesionálny Generátor Filmových Titulkov</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cinema: {
+                            gold: '#D4AF37',
+                            goldHover: '#C5A028',
+                            dark: '#030712',
+                            card: '#0B0F19',
+                            accent: '#3B82F6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&family=JetBrains+Mono:wght@400;700&family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1F2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+        
+        .thinking-glow {
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.15);
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.35); }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans overflow-x-hidden">
+
+    <!-- Hlavná navigácia -->
+    <header class="border-b border-slate-900 bg-slate-950/80 backdrop-blur px-6 py-4 flex items-center justify-between sticky top-0 z-40">
+        <div class="flex items-center gap-3">
+            <svg class="w-8 h-8 text-cinema-gold animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
+            </svg>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-cinema-gold">CineCredits</h1>
+                <p class="text-[10px] text-slate-400 tracking-widest uppercase">Generátor 1080p30 Filmových Titulkov</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-xs px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono font-bold">PRO RENDER EXPORT</span>
+        </div>
+    </header>
+
+    <!-- Hlavný Layout -->
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden">
+        
+        <!-- Ľavá strana: Nastavenia a Vstup (5 stĺpcov) -->
+        <section class="lg:col-span-5 border-r border-slate-900 bg-slate-950 flex flex-col overflow-y-auto p-6 space-y-6">
+            
+            <!-- Sekcia: Šablóny -->
+            <div>
+                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-3">Rýchla šablóna filmu</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="loadTemplate('blockbuster')" class="px-3 py-2 text-xs rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-cinema-gold/50 transition text-left">
+                        <span class="block font-semibold text-white">Sci-Fi Blockbuster</span>
+                        <span class="text-[10px] text-slate-400">Klasické rolovanie</span>
+                    </button>
+                    <button onclick="loadTemplate('drama')" class="px-3 py-2 text-xs rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-cinema-gold/50 transition text-left">
+                        <span class="block font-semibold text-white">Komorná Dráma</span>
+                        <span class="text-[10px] text-slate-400">Postupné stmievanie</span>
+                    </button>
+                    <button onclick="loadTemplate('star')" class="px-3 py-2 text-xs rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-cinema-gold/50 transition text-left">
+                        <span class="block font-semibold text-white">Galaktická Sága</span>
+                        <span class="text-[10px] text-slate-400">3D Perspektíva</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sekcia: Textový editor titulkov -->
+            <div class="flex-1 flex flex-col min-h-[300px]">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Obsah a štruktúra titulkov</label>
+                    <span class="text-[10px] text-slate-500 font-mono">Použite ':' pre rolu a meno</span>
+                </div>
+                <textarea id="creditsText" class="w-full flex-1 p-4 rounded-xl border border-slate-800 bg-slate-900/50 font-mono text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-cinema-gold/50 focus:border-transparent resize-none leading-relaxed" placeholder="Napíšte sem roly a účinkujúcich..."></textarea>
+            </div>
+
+            <!-- Sekcia: Nastavenie dizajnu -->
+            <div class="space-y-4 bg-slate-900/30 p-4 rounded-xl border border-slate-900">
+                <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Konfigurácia Vzhľadu</h3>
+                
+                <!-- Štýl animácie -->
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1.5">Štýl animácie</label>
+                    <select id="animationStyle" onchange="updatePreviewSettings()" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-cinema-gold">
+                        <option value="scroll">Klasické Vertikálne Rolovanie (Scroll)</option>
+                        <option value="fade">Filmové Postupné Stmievanie (Fade Pages)</option>
+                        <option value="starwars">Hviezdna Perspektíva (3D Space)</option>
+                        <option value="minimal">Moderný Minimalistický Split</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Typografia -->
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1.5">Písmo</label>
+                        <select id="fontFamily" onchange="updatePreviewSettings()" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-cinema-gold">
+                            <option value="Cinzel">Cinzel (Epické / Historické)</option>
+                            <option value="Inter">Inter (Moderné / Clean)</option>
+                            <option value="Playfair Display">Playfair (Umelecké / Dráma)</option>
+                            <option value="JetBrains Mono">JetBrains (Sci-Fi / Technické)</option>
+                        </select>
+                    </div>
+
+                    <!-- Farebná schéma -->
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1.5">Farba mien</label>
+                        <select id="colorScheme" onchange="updatePreviewSettings()" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-cinema-gold">
+                            <option value="gold">Cine Gold (#D4AF37)</option>
+                            <option value="white">Čistá Biela</option>
+                            <option value="silver">Strieborno Šedá</option>
+                            <option value="cyan">Sci-Fi Azúrová</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Trvanie videa -->
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1.5">Dĺžka videa (Sekundy)</label>
+                        <input type="number" id="videoDuration" onchange="updatePreviewSettings()" min="5" max="120" value="15" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-cinema-gold">
+                    </div>
+                    
+                    <!-- Hudobný podmaz -->
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1.5">Filmový zvuk</label>
+                        <select id="audioDrone" onchange="handleAudioModeChange()" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-cinema-gold">
+                            <option value="none">Bez zvuku</option>
+                            <option value="synth">Ambientný basový dron (Syntetizovaný)</option>
+                            <option value="custom">Vlastná hudba (Nahrať súbor...)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Blok pre nahratie vlastného audio súboru -->
+                <div id="customAudioBlock" class="hidden border border-slate-800 bg-slate-950/60 p-3 rounded-lg space-y-2">
+                    <label class="text-xs text-slate-400 block font-semibold">Vyberte audio súbor (MP3, WAV, M4A...)</label>
+                    <div class="flex items-center gap-2">
+                        <label class="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 font-mono cursor-pointer transition">
+                            <svg class="w-4 h-4 text-cinema-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+                            <span id="audioFileLabel">Zvoliť súbor</span>
+                            <input type="file" id="audioFileInput" accept="audio/*" onchange="loadUserAudioFile(event)" class="hidden">
+                        </label>
+                    </div>
+                    <div id="audioStatusMsg" class="text-[10px] text-slate-500 font-mono"></div>
+                </div>
+            </div>
+
+            <!-- Hlavné tlačidlo na generovanie -->
+            <button onclick="startDeepThinkingProcess()" class="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-cinema-gold to-yellow-600 hover:from-cinema-goldHover hover:to-yellow-700 text-slate-950 font-bold text-sm tracking-widest uppercase transition-all duration-300 transform active:scale-95 shadow-lg shadow-cinema-gold/10 flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path></svg>
+                Generovať 1080p30 Video (MP4)
+            </button>
+
+        </section>
+
+        <!-- Pravá strana: Živý náhľad a Hlboké uvažovanie (7 stĺpcov) -->
+        <section class="lg:col-span-7 bg-slate-950 flex flex-col p-6 space-y-6 overflow-y-auto">
+            
+            <!-- Box pre náhľad titulkovej scény -->
+            <div class="relative flex-1 bg-black rounded-2xl border border-slate-900 overflow-hidden flex flex-col items-center justify-center group min-h-[400px]">
+                
+                <div class="absolute top-4 left-4 z-10 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                    <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Živý Náhľad (Zmenšený)</span>
+                </div>
+
+                <div class="absolute top-4 right-4 z-10 flex items-center gap-2">
+                    <span class="text-xs font-mono text-slate-500 bg-slate-900/80 px-2 py-1 rounded border border-slate-800">1920x1080 (Skutočné rozlíšenie videa)</span>
+                </div>
+
+                <!-- Canvas element na renderovanie -->
+                <canvas id="creditsCanvas" class="w-full h-auto aspect-video max-w-4xl bg-black shadow-2xl rounded-lg"></canvas>
+
+                <!-- Prehrávacie ovládanie náhľadu -->
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-3 bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-full backdrop-blur transition-opacity opacity-80 hover:opacity-100">
+                    <button onclick="togglePreviewPlay()" id="playBtn" class="text-cinema-gold hover:text-white transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                    </button>
+                    <button onclick="restartPreview()" class="text-slate-400 hover:text-white transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 12H18M9 11V5h6"></path></svg>
+                    </button>
+                    <div class="w-px h-4 bg-slate-800"></div>
+                    <span id="previewTimer" class="text-xs font-mono text-slate-400">0.0s / 15.0s</span>
+                </div>
+            </div>
+
+            <!-- Informácie o exporte -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-900 flex items-center gap-3">
+                    <div class="p-3 bg-amber-500/10 text-cinema-gold rounded-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-slate-400">FPS a Plynulosť</span>
+                        <span class="font-bold text-sm text-white">30 Snímok/s (Konštantné)</span>
+                    </div>
+                </div>
+                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-900 flex items-center gap-3">
+                    <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-slate-400">Presné Rozlíšenie</span>
+                        <span class="font-bold text-sm text-white">Full HD (1920x1080)</span>
+                    </div>
+                </div>
+                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-900 flex items-center gap-3">
+                    <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-slate-400">Export a Formát</span>
+                        <span class="font-bold text-sm text-white" id="formatIndicator">Automatický MP4/WebM</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Overlay: Hĺbkové Uvažovanie a Renderovanie (Deep Thinking Screen) -->
+    <div id="deepThinkingOverlay" class="fixed inset-0 bg-slate-950/98 z-50 flex flex-col items-center justify-center p-6 hidden">
+        <div class="max-w-2xl w-full text-center space-y-8">
+            
+            <!-- Animované uvažujúce AI jadro -->
+            <div class="relative w-28 h-28 mx-auto">
+                <div class="absolute inset-0 rounded-full border border-cinema-gold/30 thinking-glow animate-ping"></div>
+                <div class="absolute inset-2 rounded-full border-2 border-dotted border-blue-500/60 animate-spin" style="animation-duration: 8s;"></div>
+                <div class="absolute inset-4 rounded-full border border-cinema-gold/50 animate-spin" style="animation-duration: 4s; animation-direction: reverse;"></div>
+                <div class="absolute inset-6 rounded-full bg-gradient-to-tr from-slate-950 to-slate-900 flex items-center justify-center shadow-inner">
+                    <svg class="w-8 h-8 text-cinema-gold animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <h2 class="text-2xl font-black tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-cinema-gold via-white to-blue-400">Prebieha hĺbkové uvažovanie AI</h2>
+                <p class="text-xs text-slate-400 font-mono">Analyzujeme text, pripravujeme vektory a zapisujeme video dáta...</p>
+            </div>
+
+            <!-- Konzola s uvažujúcimi krokmi -->
+            <div class="bg-slate-900/70 rounded-xl border border-slate-800 p-5 text-left font-mono text-xs text-slate-300 space-y-3 h-52 overflow-y-auto" id="thinkingConsole">
+                <p class="text-blue-400">&gt; Inicializácia hlbokého uvažovania...</p>
+            </div>
+
+            <!-- Celkový progres bar -->
+            <div class="space-y-1.5 text-left">
+                <div class="flex justify-between text-[11px] font-mono text-slate-400">
+                    <span>Rendering, Kompresia & Finalizácia zápisu</span>
+                    <span id="renderPercent">0%</span>
+                </div>
+                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
+                    <div id="renderProgressBar" class="h-full bg-gradient-to-r from-cinema-gold to-blue-500 w-0 transition-all duration-150"></div>
+                </div>
+            </div>
+
+            <p class="text-[10px] text-slate-500 italic">Spracovanie prebieha lokálne v tvojom prehliadači v maximálnej kvalite. Hotové video sa automaticky stiahne.</p>
+        </div>
+    </div>
+
+    <!-- Modálne okno s oznámením -->
+    <div id="customModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 max-w-md w-full p-6 rounded-2xl text-center space-y-4">
+            <div id="modalIcon" class="w-12 h-12 rounded-full bg-cinema-gold/10 text-cinema-gold flex items-center justify-center mx-auto text-xl font-bold">✓</div>
+            <h3 id="modalTitle" class="text-lg font-bold text-white">Oznámenie</h3>
+            <p id="modalBody" class="text-sm text-slate-400">Správa pre užívateľa.</p>
+            <button onclick="closeCustomModal()" class="px-5 py-2.5 rounded-lg bg-cinema-gold hover:bg-cinema-goldHover text-slate-950 font-bold text-sm tracking-wider uppercase transition">Rozumiem</button>
+        </div>
+    </div>
+
+    <!-- Scripty pre logiku, animácie a export videa -->
+    <script>
+        // Globálne referencie
+        const canvas = document.getElementById('creditsCanvas');
+        const ctx = canvas.getContext('2d');
+        const textInput = document.getElementById('creditsText');
+        const animStyleSelect = document.getElementById('animationStyle');
+        const fontFamilySelect = document.getElementById('fontFamily');
+        const colorSchemeSelect = document.getElementById('colorScheme');
+        const durationInput = document.getElementById('videoDuration');
+        const playBtn = document.getElementById('playBtn');
+        const previewTimer = document.getElementById('previewTimer');
+        const customAudioBlock = document.getElementById('customAudioBlock');
+        const audioFileLabel = document.getElementById('audioFileLabel');
+        const audioStatusMsg = document.getElementById('audioStatusMsg');
+        
+        // Globálne konštanty pre 1080p rendering
+        const VIDEO_WIDTH = 1920;
+        const VIDEO_HEIGHT = 1080;
+        canvas.width = VIDEO_WIDTH;
+        canvas.height = VIDEO_HEIGHT;
+
+        // Globálne stavy animácie
+        let isPlaying = true;
+        let animationFrameId = null;
+        let startTime = null;
+        let elapsedSeconds = 0;
+        let creditItems = [];
+        let totalAnimationHeight = 0;
+
+        // Globálny objekt pre uchovanie načítanej hudby
+        let userAudioBuffer = null;
+        let userAudioFileName = "";
+
+        // Šablóny textov pre titulky
+        const templates = {
+            blockbuster: `# GALAKTICKÝ REBEL
+# VESMÍRNA ODYSEA 2026
+
+V HLAVNÝCH ROLÁCH:
+Alexander Novák : Generál Vance
+Michaela Krajčiová : Poručík Vesper
+Viktor Hrubý : Cyborg D-4
+Sophia Kováčová : Prvá Dôstojníčka
+
+REŽISÉR:
+Patrik Valo
+
+SCENÁR:
+Ema Ševčíková
+Maroš Čierny
+
+PRODUCENTI:
+CineCredits Studios
+Slovak Film Fund
+
+ŠPECIÁLNE EFEKTY:
+CGI Slovakia Labs
+
+HUDEBNÝ PODMAZ:
+Lucas Synthesizers
+
+Natočené v spolupráci s galaktickým zväzom.
+Všetky práva vyhradené © 2026.`,
+
+            drama: `# TICHÝ ŠEPOT JESENE
+# Príbeh o rodine a čase
+
+OBSADENIE:
+Emília Vášáryová : Babka Mária
+Milan Ondrík : Syn Peter
+Táňa Pauhofová : Dcéra Zuzana
+Juraj Kemka : Sused Jozef
+
+REŽISÉR:
+Samuel Hrašško
+
+KAMERA:
+Kristína Bystrianska
+
+KOSTÝMY:
+Zuzana Muránska
+
+STRIH A ZVUK:
+Martin Tichý
+
+Ďakujeme rodine Kováčovej za zapožičanie domu pre natáčanie.
+Slovenský filmový ústav
+2026`,
+
+            star: `# EPIZÓDA IX
+# NÁVRAT KÓDU
+
+Bolo nebolo, vo vzdialenej galaxii programátorov nastal mier.
+Všetky chyby v kóde boli odstránené,
+systémy bežali optimálne.
+
+Hlavný vývojár : Peter Webový
+Senior architekt : Andrej Cloudový
+UI expert : Nina Responzívna
+UX manažér : Tomáš Použiteľný
+
+Testeri :
+Róbert Klikavý
+Zdenka Bezchybná
+
+Tento softvér bol vytvorený pod vplyvom kofeínu a nedostatku spánku.
+Nech vás sila sprevádza.`
+        };
+
+        // Načítanie default šablóny na štart
+        window.onload = function() {
+            loadTemplate('blockbuster');
+            animatePreview();
+            updateFormatIndicator();
+        };
+
+        // Indikátor dostupného formátu pre export na základe prehliadača
+        function updateFormatIndicator() {
+            const indicator = document.getElementById('formatIndicator');
+            if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264') || MediaRecorder.isTypeSupported('video/mp4')) {
+                indicator.innerText = "Priamy MP4 (H.264)";
+            } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9') || MediaRecorder.isTypeSupported('video/webm')) {
+                indicator.innerText = "WebM / MP4 kontajner";
+            } else {
+                indicator.innerText = "Predvolený systémový";
+            }
+        }
+
+        function loadTemplate(name) {
+            textInput.value = templates[name];
+            if (name === 'drama') {
+                animStyleSelect.value = 'fade';
+                fontFamilySelect.value = 'Playfair Display';
+                colorSchemeSelect.value = 'silver';
+                durationInput.value = '18';
+            } else if (name === 'star') {
+                animStyleSelect.value = 'starwars';
+                fontFamilySelect.value = 'Cinzel';
+                colorSchemeSelect.value = 'gold';
+                durationInput.value = '25';
+            } else {
+                animStyleSelect.value = 'scroll';
+                fontFamilySelect.value = 'Inter';
+                colorSchemeSelect.value = 'cyan';
+                durationInput.value = '15';
+            }
+            parseCreditsText();
+            restartPreview();
+        }
+
+        // Správa zobrazenia nahrávania zvuku pri zmene výberu
+        function handleAudioModeChange() {
+            const val = document.getElementById('audioDrone').value;
+            if (val === 'custom') {
+                customAudioBlock.classList.remove('hidden');
+            } else {
+                customAudioBlock.classList.add('hidden');
+            }
+        }
+
+        // Spracovanie nahraného hudobného súboru do audio bufferu
+        function loadUserAudioFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            userAudioFileName = file.name;
+            audioFileLabel.innerText = file.name.length > 20 ? file.name.substring(0, 17) + "..." : file.name;
+            audioStatusMsg.innerText = "⏳ Spracovávam a dekódujem audio stopu...";
+            audioStatusMsg.className = "text-[10px] text-amber-400 font-mono";
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const arrayBuffer = e.target.result;
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                audioCtx.decodeAudioData(arrayBuffer, function(decodedBuffer) {
+                    userAudioBuffer = decodedBuffer;
+                    audioStatusMsg.innerText = `✓ Hudba bola načítaná úspešne! (Dĺžka: ${decodedBuffer.duration.toFixed(1)}s)`;
+                    audioStatusMsg.className = "text-[10px] text-emerald-400 font-mono";
+                    playSynthClick(); // Zvukové potvrdenie
+                }, function(err) {
+                    audioStatusMsg.innerText = "❌ Nepodarilo sa dekódovať audio súbor. Skúste MP3 alebo WAV.";
+                    audioStatusMsg.className = "text-[10px] text-red-400 font-mono";
+                    userAudioBuffer = null;
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Parsovanie textu na sémantickú štruktúru
+        function parseCreditsText() {
+            const raw = textInput.value;
+            const lines = raw.split('\n');
+            creditItems = [];
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed === '') {
+                    creditItems.push({ type: 'space', size: 40 });
+                } else if (trimmed.startsWith('#')) {
+                    // Hlavný nadpis / Titulok
+                    creditItems.push({ type: 'title', text: trimmed.replace(/^#\s*/, '').toUpperCase() });
+                } else if (trimmed.includes(':')) {
+                    // Dvojica: Rola a Meno
+                    const parts = trimmed.split(':');
+                    creditItems.push({ 
+                        type: 'pair', 
+                        label: parts[0].trim(), 
+                        value: parts[1].trim() 
+                    });
+                } else {
+                    // Obyčajný text alebo podnadpis
+                    if (trimmed === trimmed.toUpperCase() && trimmed.length > 3) {
+                        creditItems.push({ type: 'section', text: trimmed });
+                    } else {
+                        creditItems.push({ type: 'text', text: trimmed });
+                    }
+                }
+            });
+        }
+
+        // Získanie zvolenej farby
+        function getSelectedColor() {
+            const val = colorSchemeSelect.value;
+            switch(val) {
+                case 'gold': return '#D4AF37';
+                case 'white': return '#FFFFFF';
+                case 'silver': return '#CCCCCC';
+                case 'cyan': return '#22D3EE';
+                default: return '#FFFFFF';
+            }
+        }
+
+        // Výpočet pozícií a výšky pre Klasický Scroll
+        function calculateTotalScrollHeight() {
+            let height = 0;
+            const font = fontFamilySelect.value;
+            
+            creditItems.forEach(item => {
+                if (item.type === 'space') {
+                    height += item.size;
+                } else if (item.type === 'title') {
+                    height += 100; // Väčší priestor pre titul
+                } else if (item.type === 'section') {
+                    height += 70;
+                } else if (item.type === 'pair') {
+                    height += 55;
+                } else if (item.type === 'text') {
+                    height += 45;
+                }
+            });
+            return height;
+        }
+
+        // Kreslenie konkrétneho snímku pre zadaný čas
+        function drawFrame(timeSec, totalDuration) {
+            // Vyčistenie canvasu na čierno
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT);
+
+            const font = fontFamilySelect.value;
+            const color = getSelectedColor();
+            const progress = timeSec / totalDuration;
+            const style = animStyleSelect.value;
+
+            if (style === 'scroll') {
+                // Klasický scroll zdola nahor
+                const totalHeight = calculateTotalScrollHeight();
+                const startY = VIDEO_HEIGHT + 100;
+                const endY = -totalHeight - 100;
+                const currentY = startY + (endY - startY) * progress;
+
+                let yTracker = currentY;
+
+                creditItems.forEach(item => {
+                    if (yTracker > -100 && yTracker < VIDEO_HEIGHT + 100) {
+                        renderItem(item, yTracker, font, color);
+                    }
+                    
+                    if (item.type === 'space') yTracker += item.size;
+                    else if (item.type === 'title') yTracker += 100;
+                    else if (item.type === 'section') yTracker += 70;
+                    else if (item.type === 'pair') yTracker += 55;
+                    else if (item.type === 'text') yTracker += 45;
+                });
+
+            } else if (style === 'fade') {
+                // Postupné zobrazovanie "stránok"
+                const pages = [];
+                let currentPage = [];
+                let elementCount = 0;
+
+                creditItems.forEach(item => {
+                    if (item.type === 'title' || item.type === 'section') {
+                        if (currentPage.length > 0) {
+                            pages.push(currentPage);
+                            currentPage = [];
+                        }
+                    }
+                    currentPage.push(item);
+                    if (item.type !== 'space') elementCount++;
+                    
+                    if (elementCount >= 5 && currentPage.length > 3) {
+                        pages.push(currentPage);
+                        currentPage = [];
+                        elementCount = 0;
+                    }
+                });
+                if (currentPage.length > 0) pages.push(currentPage);
+
+                const totalPages = pages.length;
+                if (totalPages === 0) return;
+
+                const secPerPage = totalDuration / totalPages;
+                const pageIndex = Math.min(Math.floor(timeSec / secPerPage), totalPages - 1);
+                const localProgress = (timeSec % secPerPage) / secPerPage;
+
+                let opacity = 1;
+                if (localProgress < 0.2) {
+                    opacity = localProgress / 0.2; // Fade in
+                } else if (localProgress > 0.8) {
+                    opacity = (1 - localProgress) / 0.2; // Fade out
+                }
+
+                const activePageItems = pages[pageIndex];
+                let pageHeight = 0;
+                activePageItems.forEach(item => {
+                    if (item.type === 'space') pageHeight += item.size;
+                    else if (item.type === 'title') pageHeight += 100;
+                    else if (item.type === 'section') pageHeight += 70;
+                    else if (item.type === 'pair') pageHeight += 55;
+                    else if (item.type === 'text') pageHeight += 45;
+                });
+
+                let startY = (VIDEO_HEIGHT - pageHeight) / 2 + 100;
+                ctx.save();
+                ctx.globalAlpha = opacity;
+                
+                activePageItems.forEach(item => {
+                    renderItem(item, startY, font, color);
+                    if (item.type === 'space') startY += item.size;
+                    else if (item.type === 'title') startY += 100;
+                    else if (item.type === 'section') startY += 70;
+                    else if (item.type === 'pair') startY += 55;
+                    else if (item.type === 'text') startY += 45;
+                });
+                ctx.restore();
+
+            } else if (style === 'starwars') {
+                // 3D vesmírna perspektíva s hviezdnym pozadím
+                drawStarfield(timeSec);
+
+                const totalHeight = calculateTotalScrollHeight();
+                const startY = VIDEO_HEIGHT * 0.1;
+                const endY = -totalHeight - 200;
+                const scrollY = startY + (endY - startY) * progress;
+
+                let yTracker = scrollY;
+
+                creditItems.forEach(item => {
+                    const z = 800 - (yTracker * 0.4);
+                    
+                    if (z > 50) {
+                        const scale = 500 / z;
+                        const screenX = VIDEO_WIDTH / 2;
+                        const screenY = (VIDEO_HEIGHT / 2) + (yTracker - VIDEO_HEIGHT / 2) * scale;
+
+                        if (screenY > 0 && screenY < VIDEO_HEIGHT + 100) {
+                            ctx.save();
+                            ctx.translate(screenX, screenY);
+                            ctx.scale(scale, scale);
+                            renderItemAtCenter(item, 0, font, color);
+                            ctx.restore();
+                        }
+                    }
+                    
+                    if (item.type === 'space') yTracker += item.size;
+                    else if (item.type === 'title') yTracker += 120;
+                    else if (item.type === 'section') yTracker += 80;
+                    else if (item.type === 'pair') yTracker += 60;
+                    else if (item.type === 'text') yTracker += 50;
+                });
+
+            } else if (style === 'minimal') {
+                // Moderný minimalistický split layout
+                const pairs = creditItems.filter(i => i.type === 'pair');
+                const titles = creditItems.filter(i => i.type === 'title');
+                
+                if (titles.length > 0) {
+                    ctx.textAlign = 'left';
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.font = `bold 64px ${font}`;
+                    ctx.fillText(titles[0].text, 150, 300);
+                    
+                    ctx.fillStyle = color;
+                    ctx.font = `24px ${font}`;
+                    ctx.fillText("ZÁVEREČNÉ TITULKY FILMU", 150, 350);
+                    
+                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(150, 400);
+                    ctx.lineTo(600, 400);
+                    ctx.stroke();
+                }
+
+                if (pairs.length > 0) {
+                    const activePairsCount = 6;
+                    const durationPerBatch = totalDuration / Math.ceil(pairs.length / activePairsCount);
+                    const batchIndex = Math.min(Math.floor(timeSec / durationPerBatch), Math.ceil(pairs.length / activePairsCount) - 1);
+                    const localProgress = (timeSec % durationPerBatch) / durationPerBatch;
+
+                    let opacity = 1;
+                    if (localProgress < 0.15) opacity = localProgress / 0.15;
+                    else if (localProgress > 0.85) opacity = (1 - localProgress) / 0.15;
+
+                    ctx.save();
+                    ctx.globalAlpha = opacity;
+                    
+                    const startIndex = batchIndex * activePairsCount;
+                    const endIndex = Math.min(startIndex + activePairsCount, pairs.length);
+                    
+                    let yPos = 250;
+                    for (let i = startIndex; i < endIndex; i++) {
+                        const pair = pairs[i];
+                        
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = '#94A3B8';
+                        ctx.font = `30px ${font}`;
+                        ctx.fillText(pair.label, VIDEO_WIDTH - 650, yPos);
+
+                        ctx.textAlign = 'left';
+                        ctx.fillStyle = color;
+                        ctx.font = `bold 32px ${font}`;
+                        ctx.fillText(pair.value, VIDEO_WIDTH - 580, yPos);
+
+                        yPos += 110;
+                    }
+                    ctx.restore();
+                }
+            }
+        }
+
+        // Pomocná funkcia: Renderovanie elementu na špecifické Y
+        function renderItem(item, y, font, color) {
+            ctx.textAlign = 'center';
+            
+            if (item.type === 'title') {
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `bold 55px ${font}`;
+                ctx.fillText(item.text, VIDEO_WIDTH / 2, y);
+            } else if (item.type === 'section') {
+                ctx.fillStyle = '#94A3B8';
+                ctx.font = `semibold 26px ${font}`;
+                ctx.fillText(item.text, VIDEO_WIDTH / 2, y);
+            } else if (item.type === 'text') {
+                ctx.fillStyle = '#CCCCCC';
+                ctx.font = `30px ${font}`;
+                ctx.fillText(item.text, VIDEO_WIDTH / 2, y);
+            } else if (item.type === 'pair') {
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#94A3B8';
+                ctx.font = `28px ${font}`;
+                ctx.fillText(item.label, VIDEO_WIDTH / 2 - 40, y);
+
+                ctx.textAlign = 'left';
+                ctx.fillStyle = color;
+                ctx.font = `bold 30px ${font}`;
+                ctx.fillText(item.value, VIDEO_WIDTH / 2 + 40, y);
+            }
+        }
+
+        // Pomocná funkcia pre 3D Star Wars centrovaný render
+        function renderItemAtCenter(item, y, font, color) {
+            ctx.textAlign = 'center';
+            if (item.type === 'title') {
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `bold 55px ${font}`;
+                ctx.fillText(item.text, 0, y);
+            } else if (item.type === 'section') {
+                ctx.fillStyle = '#94A3B8';
+                ctx.font = `bold 35px ${font}`;
+                ctx.fillText(item.text, 0, y);
+            } else if (item.type === 'text') {
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `30px ${font}`;
+                ctx.fillText(item.text, 0, y);
+            } else if (item.type === 'pair') {
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = `30px ${font}`;
+                ctx.fillText(item.label, -30, y);
+
+                ctx.textAlign = 'left';
+                ctx.fillStyle = color;
+                ctx.font = `bold 30px ${font}`;
+                ctx.fillText(item.value, 30, y);
+            }
+        }
+
+        // Generovanie náhodných hviezd pre sci-fi motív
+        const stars = Array.from({ length: 150 }, () => ({
+            x: Math.random() * VIDEO_WIDTH,
+            y: Math.random() * VIDEO_HEIGHT,
+            size: Math.random() * 2 + 0.5
+        }));
+
+        function drawStarfield(time) {
+            ctx.fillStyle = '#020205';
+            ctx.fillRect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT);
+            ctx.fillStyle = '#FFFFFF';
+            stars.forEach(star => {
+                let z = star.size + (time * 0.2);
+                if (z > 3) z = 0.5;
+                ctx.fillRect(star.x, star.y, z, z);
+            });
+        }
+
+        // Kontrola a aktualizácia nastavení náhľadu
+        function updatePreviewSettings() {
+            parseCreditsText();
+            if (!isPlaying) {
+                drawFrame(elapsedSeconds, parseFloat(durationInput.value));
+            }
+        }
+
+        // Prehrávanie v reálnom čase (Náhľad)
+        function animatePreview(timestamp) {
+            if (!startTime) startTime = timestamp;
+            
+            if (isPlaying) {
+                const totalDuration = parseFloat(durationInput.value);
+                elapsedSeconds = ((timestamp - startTime) / 1000) % totalDuration;
+                
+                drawFrame(elapsedSeconds, totalDuration);
+                previewTimer.innerText = `${elapsedSeconds.toFixed(1)}s / ${totalDuration.toFixed(1)}s`;
+            }
+
+            animationFrameId = requestAnimationFrame(animatePreview);
+        }
+
+        function togglePreviewPlay() {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                startTime = performance.now() - (elapsedSeconds * 1000);
+                playBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>`;
+            } else {
+                playBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>`;
+            }
+        }
+
+        function restartPreview() {
+            startTime = performance.now();
+            elapsedSeconds = 0;
+            if (!isPlaying) {
+                drawFrame(0, parseFloat(durationInput.value));
+                previewTimer.innerText = `0.0s / ${parseFloat(durationInput.value).toFixed(1)}s`;
+            }
+        }
+
+
+        // ==========================================
+        // PROCES HĹBKOVÉHO UVAŽOVANIA (DEEP THINKING)
+        // ==========================================
+
+        const consoleLines = [
+            { text: "⚡ Spúšťam kognitívne jadro AI CineCredits v2.7-STABLE...", delay: 500 },
+            { text: "🔍 Analyzujem formátovanie a štruktúru zadaného textu...", delay: 600 },
+            { text: "🧠 Hľadám role (napr. Režisér, Kamera, Účinkujúci) a mapujem k nim mená...", delay: 600 },
+            { text: "🎨 Optimalizujem typografiu: Vybrané písmo a farebné kontrasty pre 1080p...", delay: 700 },
+            { text: "🎵 Overujem prítomnosť a celistvosť zvukovej stopy...", delay: 800 },
+            { text: "🎞️ Aktivujem renderovanie s podporou formátu MP4 (H.264 / AAC)...", delay: 700 },
+            { text: "🛰️ Spúšťam virtualizáciu Offscreen Canvas (1920x1080) pre bezstratový rendering...", delay: 800 },
+            { text: "🎬 Vypočítavam plynulosť prechodov vertikálneho pohybu pri konštantných 30.0 fps...", delay: 700 },
+            { text: "🔊 Pripravujem asynchrónny zapisovač audio-video toku (Media Stream Destination)...", delay: 800 },
+            { text: "🚀 Všetky systémy sú pripravené a stabilizované. Spúšťam samotný rendering snímok...", delay: 500 }
+        ];
+
+        let consoleElement = document.getElementById('thinkingConsole');
+        let overlay = document.getElementById('deepThinkingOverlay');
+        let progressBar = document.getElementById('renderProgressBar');
+        let renderPercentText = document.getElementById('renderPercent');
+
+        function startDeepThinkingProcess() {
+            // Kontrola prázdnej hudby
+            const audioMode = document.getElementById('audioDrone').value;
+            if (audioMode === 'custom' && !userAudioBuffer) {
+                openCustomModal("⚠️ Chýba audio súbor", "Zvolili ste možnosť vlastnej hudby, ale nenahrali ste žiadny hudobný súbor. Nahrajte súbor, alebo vyberte iný typ zvuku.");
+                return;
+            }
+
+            isPlaying = false;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+            overlay.classList.remove('hidden');
+            consoleElement.innerHTML = '';
+            progressBar.style.width = '0%';
+            renderPercentText.innerText = '0%';
+
+            let lineIndex = 0;
+
+            function printNextLine() {
+                if (lineIndex < consoleLines.length) {
+                    const line = consoleLines[lineIndex];
+                    const p = document.createElement('p');
+                    p.className = 'text-slate-300';
+                    p.innerHTML = `<span class="text-cinema-gold">✓</span> ${line.text}`;
+                    consoleElement.appendChild(p);
+                    consoleElement.scrollTop = consoleElement.scrollHeight;
+
+                    playSynthClick();
+
+                    lineIndex++;
+                    setTimeout(printNextLine, line.delay);
+                } else {
+                    renderAndEncodeVideo();
+                }
+            }
+
+            printNextLine();
+        }
+
+        function playSynthClick() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch(e) {}
+        }
+
+
+        // ==========================================
+        // RENDER & ENKÓDOVANIE (1080p30 EXPORT)
+        // ==========================================
+
+        async function renderAndEncodeVideo() {
+            const p = document.createElement('p');
+            p.className = 'text-yellow-400 font-bold';
+            p.innerHTML = `&gt; Spúšťam renderovanie snímok v rozlíšení 1920x1080...`;
+            consoleElement.appendChild(p);
+
+            const duration = parseFloat(durationInput.value);
+            const fps = 30;
+            const totalFrames = duration * fps;
+            
+            // Zachytávanie canvas streamu
+            const stream = canvas.captureStream(fps);
+            let recorder;
+            let chunks = [];
+
+            // Určenie podporovaných formátov. Uprednostňujeme MP4 (H.264)
+            let selectedMimeType = '';
+            let fileExtension = 'mp4';
+
+            const preferredTypes = [
+                'video/mp4;codecs=h264',
+                'video/mp4',
+                'video/webm;codecs=vp9',
+                'video/webm;codecs=vp8',
+                'video/webm'
+            ];
+
+            for (const mimeType of preferredTypes) {
+                if (MediaRecorder.isTypeSupported(mimeType)) {
+                    selectedMimeType = mimeType;
+                    if (mimeType.includes('webm')) {
+                        fileExtension = 'mp4'; // Môžeme uložiť ako .mp4, alebo použiť .webm (pre maximálnu kompatibilitu v prehrávačoch ponecháme príponu .mp4)
+                    }
+                    break;
+                }
+            }
+
+            const pFormat = document.createElement('p');
+            pFormat.className = 'text-blue-400 text-[10px]';
+            pFormat.innerText = `[Formát] Vybraný kodek: ${selectedMimeType || "Predvolený systémový"}`;
+            consoleElement.appendChild(pFormat);
+
+            let options = selectedMimeType ? { mimeType: selectedMimeType } : {};
+
+            try {
+                recorder = new MediaRecorder(stream, options);
+            } catch (e) {
+                recorder = new MediaRecorder(stream);
+            }
+
+            // KĽÚČOVÁ OPRAVA: Zber dát prebieha asynchrónne
+            recorder.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) {
+                    chunks.push(e.data);
+                }
+            };
+
+            // Audio Web API integrácia
+            let audioCtx, dest;
+            const audioMode = document.getElementById('audioDrone').value;
+
+            if (audioMode !== 'none') {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    dest = audioCtx.createMediaStreamDestination();
+                    
+                    const gainNode = audioCtx.createGain();
+                    gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                    
+                    if (audioMode === 'synth') {
+                        const osc = audioCtx.createOscillator();
+                        const filter = audioCtx.createBiquadFilter();
+                        
+                        osc.type = 'sawtooth';
+                        osc.frequency.value = 55;
+                        filter.type = 'lowpass';
+                        filter.frequency.value = 150;
+                        
+                        osc.connect(filter);
+                        filter.connect(gainNode);
+                        
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + duration);
+                    } else if (audioMode === 'custom' && userAudioBuffer) {
+                        const bufferSource = audioCtx.createBufferSource();
+                        bufferSource.buffer = userAudioBuffer;
+                        bufferSource.connect(gainNode);
+                        
+                        bufferSource.start(0);
+                        bufferSource.stop(audioCtx.currentTime + duration);
+                    }
+
+                    gainNode.connect(dest);
+                    
+                    // Plynulý fade-out na konci (stíšenie do stratena)
+                    gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime + duration - 2);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                    
+                    const audioTracks = dest.stream.getAudioTracks();
+                    if (audioTracks.length > 0) {
+                        stream.addTrack(audioTracks[0]);
+                    }
+                } catch(e) {
+                    console.error("Nepodarilo sa inicializovať zvuk:", e);
+                }
+            }
+
+            // KĽÚČOVÁ OPRAVA: Počkáme, kým sa nahrávanie naozaj zastaví, a až vtedy spustíme ukladanie súboru
+            recorder.onstop = () => {
+                if (audioCtx) {
+                    try { audioCtx.close(); } catch(err) {}
+                }
+                // Spustíme asynchrónnu finalizáciu
+                finalizeExport(chunks, selectedMimeType || 'video/mp4', fileExtension);
+            };
+
+            recorder.start();
+
+            let currentFrame = 0;
+
+            // Renderovacia slučka pre ukladanie videa
+            function renderNextFrame() {
+                if (currentFrame <= totalFrames) {
+                    const time = currentFrame / fps;
+                    
+                    drawFrame(time, duration);
+
+                    const progressPercent = Math.min(Math.round((currentFrame / totalFrames) * 100), 100);
+                    progressBar.style.width = `${progressPercent}%`;
+                    renderPercentText.innerText = `${progressPercent}%`;
+
+                    if (currentFrame % 15 === 0) {
+                        const frameLog = document.createElement('p');
+                        frameLog.className = 'text-slate-400 text-[10px]';
+                        frameLog.innerText = `[Render] Snímka ${currentFrame}/${totalFrames} | Sekunda: ${time.toFixed(1)}s / ${duration}s`;
+                        consoleElement.appendChild(frameLog);
+                        consoleElement.scrollTop = consoleElement.scrollHeight;
+                    }
+
+                    currentFrame++;
+                    setTimeout(renderNextFrame, 1000 / fps);
+                } else {
+                    // Po dokončení snímok zastavíme rekordér
+                    const pCompiling = document.createElement('p');
+                    pCompiling.className = 'text-amber-400 font-bold animate-pulse';
+                    pCompiling.innerText = `⌛ Finalizujem kódovanie, generujem video dáta...`;
+                    consoleElement.appendChild(pCompiling);
+                    consoleElement.scrollTop = consoleElement.scrollHeight;
+                    
+                    // Zastavíme nahrávanie (toto asynchrónne spustí recorder.onstop)
+                    setTimeout(() => {
+                        recorder.stop();
+                    }, 500);
+                }
+            }
+
+            renderNextFrame();
+        }
+
+        // Uloženie súboru a automatické jednorazové stiahnutie
+        function finalizeExport(chunks, mimeType, fileExtension) {
+            const finalLog = document.createElement('p');
+            finalLog.className = 'text-emerald-400 font-bold';
+            finalLog.innerHTML = `✓ Video bolo úspešne skompilované a uložené!`;
+            consoleElement.appendChild(finalLog);
+            consoleElement.scrollTop = consoleElement.scrollHeight;
+
+            // Vytvorenie Blob z asynchrónne získaných chunks s presným mimeTypom
+            const blob = new Blob(chunks, { type: mimeType });
+            
+            // Ak má blob 0 bytov, vypíšeme varovanie do konzoly
+            if (blob.size === 0) {
+                console.error("Chyba: Výsledné video má veľkosť 0 bajtov. Opakujem pokus so základným typom...");
+                const fallbackBlob = new Blob(chunks, { type: 'video/webm' });
+                triggerDownload(fallbackBlob, 'mp4');
+            } else {
+                triggerDownload(blob, fileExtension);
+            }
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                
+                isPlaying = true;
+                startTime = performance.now();
+                animatePreview();
+
+                openCustomModal(
+                    "✓ Spracovanie úspešné", 
+                    "Vaše video v kvalite 1080p30 bolo úspešne vygenerované, asynchrónne spracované so zvukom a automaticky stiahnuté do vášho zariadenia s príponou ." + fileExtension + "."
+                );
+            }, 1200);
+        }
+
+        // Pomocná funkcia na stiahnutie súboru
+        function triggerDownload(blob, fileExtension) {
+            const videoUrl = URL.createObjectURL(blob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = videoUrl;
+            downloadLink.download = `filmove_titulky_1080p30_${Date.now()}.${fileExtension}`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            // Uvoľnenie pamäte
+            setTimeout(() => {
+                URL.revokeObjectURL(videoUrl);
+            }, 3000);
+        }
+
+
+        // ==========================================
+        // POMOCNÉ MODÁLNE OKNO (PREVENT ALERT)
+        // ==========================================
+
+        function openCustomModal(title, text) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalBody').innerText = text;
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function closeCustomModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

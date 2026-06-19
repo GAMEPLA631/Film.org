@@ -1433,9 +1433,9 @@ Nech vás sila sprevádza.`
         }
 
 
-        // ==========================================
-        // RENDER & ENKÓDOVANIE (720p vs 1080p EXPORT)
-        // ==========================================
+        // ==========================================================
+        // OPRAVENÝ RENDER & ENKÓDOVANIE (720p vs 1080p BEZCHYBNÝ EXPORT)
+        // ==========================================================
 
         async function renderAndEncodeVideo() {
             const p = document.createElement('p');
@@ -1447,48 +1447,11 @@ Nech vás sila sprevádza.`
             const fps = 30;
             const totalFrames = duration * fps;
             
+            // 1. Vytvorenie základného video streamu z canvasu
             const stream = canvas.captureStream(fps);
-            let recorder;
             let chunks = [];
 
-            let selectedMimeType = '';
-            let fileExtension = 'mp4';
-
-            const preferredTypes = [
-                'video/mp4;codecs=h264',
-                'video/mp4',
-                'video/webm;codecs=vp9',
-                'video/webm;codecs=vp8',
-                'video/webm'
-            ];
-
-            for (const mimeType of preferredTypes) {
-                if (MediaRecorder.isTypeSupported(mimeType)) {
-                    selectedMimeType = mimeType;
-                    break;
-                }
-            }
-
-            const pFormat = document.createElement('p');
-            pFormat.className = 'text-blue-400 text-[10px]';
-            pFormat.innerText = `[Formát] Vybraný kodek: ${selectedMimeType || "Predvolený systémový"}`;
-            consoleElement.appendChild(pFormat);
-
-            let options = selectedMimeType ? { mimeType: selectedMimeType } : {};
-
-            try {
-                recorder = new MediaRecorder(stream, options);
-            } catch (e) {
-                recorder = new MediaRecorder(stream);
-            }
-
-            recorder.ondataavailable = (e) => {
-                if (e.data && e.data.size > 0) {
-                    chunks.push(e.data);
-                }
-            };
-
-            // Audio Web API integrácia
+            // 2. Audio Web API integrácia – spracovanie zvuku EŠTE PRED inicializáciou MediaRecorder
             let audioCtx, dest;
             const audioMode = document.getElementById('audioDrone').value;
 
@@ -1531,6 +1494,7 @@ Nech vás sila sprevádza.`
                     
                     const audioTracks = dest.stream.getAudioTracks();
                     if (audioTracks.length > 0) {
+                        // KĽÚČOVÁ OPRAVA: Audio track pridáme do streamu pred vytvorením MediaRecorderu!
                         stream.addTrack(audioTracks[0]);
                     }
                 } catch(e) {
@@ -1538,11 +1502,61 @@ Nech vás sila sprevádza.`
                 }
             }
 
+            // 3. Výber najlepšieho podporovaného formátu podľa prehliadača (MP4 vs WebM)
+            let selectedMimeType = '';
+            let fileExtension = 'mp4';
+
+            const preferredTypes = [
+                'video/mp4;codecs=h264',
+                'video/mp4',
+                'video/webm;codecs=vp9',
+                'video/webm;codecs=vp8',
+                'video/webm'
+            ];
+
+            for (const mimeType of preferredTypes) {
+                if (MediaRecorder.isTypeSupported(mimeType)) {
+                    selectedMimeType = mimeType;
+                    break;
+                }
+            }
+
+            // Určenie správnej koncovky súboru, aby ho dokázal prehrať natívny prehrávač
+            if (selectedMimeType.includes('mp4')) {
+                fileExtension = 'mp4';
+            } else if (selectedMimeType.includes('webm')) {
+                fileExtension = 'webm';
+            } else {
+                fileExtension = 'mp4';
+            }
+
+            const pFormat = document.createElement('p');
+            pFormat.className = 'text-blue-400 text-[10px]';
+            pFormat.innerText = `[Formát] Vybraný kodek: ${selectedMimeType || "Predvolený"} (.${fileExtension})`;
+            consoleElement.appendChild(pFormat);
+
+            let options = selectedMimeType ? { mimeType: selectedMimeType } : {};
+            let recorder;
+
+            try {
+                recorder = new MediaRecorder(stream, options);
+            } catch (e) {
+                console.warn("Vybraný kodek zlyhal, prepínam na bezpečný fallback:", e);
+                recorder = new MediaRecorder(stream);
+                fileExtension = 'webm';
+            }
+
+            recorder.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) {
+                    chunks.push(e.data);
+                }
+            };
+
             recorder.onstop = () => {
                 if (audioCtx) {
                     try { audioCtx.close(); } catch(err) {}
                 }
-                finalizeExport(chunks, selectedMimeType || 'video/mp4', fileExtension);
+                finalizeExport(chunks, selectedMimeType || 'video/webm', fileExtension);
             };
 
             recorder.start();
@@ -1598,7 +1612,7 @@ Nech vás sila sprevádza.`
             if (blob.size === 0) {
                 console.error("Chyba: Výsledné video má veľkosť 0 bajtov. Opakujem pokus so základným typom...");
                 const fallbackBlob = new Blob(chunks, { type: 'video/webm' });
-                triggerDownload(fallbackBlob, 'mp4');
+                triggerDownload(fallbackBlob, 'webm');
             } else {
                 triggerDownload(blob, fileExtension);
             }

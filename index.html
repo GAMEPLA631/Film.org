@@ -466,7 +466,7 @@
                 </div>
 
             </div>
-            <p class="text-[10px] text-slate-500 text-center italic mt-2">Jedná sa o simulovanú a plne bezpečnú testovaciu platobnú bránu. Žiadne skutočné peniaze sa neúčtujú.</p>
+            <p class="text-[10px] text-slate-500 text-center italic mt-2">Jedná sa o simulovanu a plne bezpečnú testovaciu platobnú bránu. Žiadne skutočné peniaze sa neúčtujú.</p>
         </div>
     </div>
 
@@ -569,6 +569,77 @@
         let pendingPlanPrice = 0.0;
         let pendingPlanDays = 0;
 
+        // INDEXEDDB CONFIG & INITIALIZATION
+        const dbName = "CineCreditsDB";
+        const dbVersion = 1;
+        let db;
+
+        function initIndexedDB() {
+            return new Promise((resolve) => {
+                const request = indexedDB.open(dbName, dbVersion);
+                request.onupgradeneeded = function(e) {
+                    const localDb = e.target.result;
+                    if (!localDb.objectStoreNames.contains("membership")) {
+                        localDb.createObjectStore("membership", { keyPath: "id" });
+                    }
+                };
+                request.onsuccess = function(e) {
+                    db = e.target.result;
+                    resolve(db);
+                };
+                request.onerror = function() {
+                    resolve(null);
+                };
+            });
+        }
+
+        function saveMembershipToDB(membership) {
+            if (!db) return;
+            try {
+                const transaction = db.transaction(["membership"], "readwrite");
+                const store = transaction.objectStore("membership");
+                store.put({
+                    id: "current_user",
+                    plan: membership.plan,
+                    expiresAt: membership.expiresAt ? membership.expiresAt.toISOString() : null,
+                    isPremium: membership.isPremium
+                });
+            } catch (err) {
+                console.error("Chyba zápisu do IndexedDB:", err);
+            }
+        }
+
+        function loadMembershipFromDB() {
+            return new Promise((resolve) => {
+                if (!db) {
+                    resolve(null);
+                    return;
+                }
+                try {
+                    const transaction = db.transaction(["membership"], "readonly");
+                    const store = transaction.objectStore("membership");
+                    const request = store.get("current_user");
+                    request.onsuccess = function(e) {
+                        if (e.target.result) {
+                            const data = e.target.result;
+                            resolve({
+                                plan: data.plan,
+                                expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
+                                isPremium: data.isPremium
+                            });
+                        } else {
+                            resolve(null);
+                        }
+                    };
+                    request.onerror = function() {
+                        resolve(null);
+                    };
+                } catch (err) {
+                    resolve(null);
+                }
+            });
+        }
+
         // Šablóny textov pre titulky
         const templates = {
             blockbuster: `# GALAKTICKÝ REBEL
@@ -646,11 +717,21 @@ Nech vás sila sprevádza.`
         };
 
         // Načítanie na štart
-        window.onload = function() {
+        window.onload = async function() {
             loadTemplate('blockbuster');
             animatePreview();
+            
+            // Inicializácia a načítanie členstva z IndexedDB
+            await initIndexedDB();
+            const storedMembership = await loadMembershipFromDB();
+            if (storedMembership) {
+                userMembership = storedMembership;
+                updateMembershipUI();
+                updateResolutionAndCanvas();
+            }
+            
             checkMembershipExpiration();
-            setInterval(checkMembershipExpiration, 5000); // Kontrola vypršania každých 5 sekúnd
+            setInterval(checkMembershipExpiration, 1000); // Kontrola vypršania každú sekundu v reálnom čase
         };
 
         // KONTROLA EXPIRÁCIE ČLENSTVA
@@ -660,10 +741,13 @@ Nech vás sila sprevádza.`
                 const timeLeft = userMembership.expiresAt.getTime() - now.getTime();
 
                 if (timeLeft <= 0) {
-                    // Členstvo práve vypršalo!
+                    // Členstvo vypršalo!
                     userMembership.plan = 'free';
                     userMembership.isPremium = false;
                     userMembership.expiresAt = null;
+
+                    // Uložiť nový vypršaný stav do IndexedDB
+                    saveMembershipToDB(userMembership);
 
                     // Ak bol vybraný prémiový model, vrátime na free model
                     if (selectedAIModel === 'premium-v2' || selectedAIModel === 'premium-v3') {
@@ -720,7 +804,7 @@ Nech vás sila sprevádza.`
                 
                 // Formátovanie dátumu expirácie
                 const expDate = userMembership.expiresAt;
-                const dateStr = `${expDate.getDate()}.${expDate.getMonth() + 1}.${expDate.getFullYear()} o ${expDate.getHours()}:${String(expDate.getMinutes()).padStart(2, '0')}`;
+                const dateStr = `${expDate.getDate()}.${expDate.getMonth() + 1}.${expDate.getFullYear()} o ${expDate.getHours()}:${String(expDate.getMinutes()).padStart(2, '0')}:${String(expDate.getSeconds()).padStart(2, '0')}`;
                 infoPlanDetails.innerText = `Vyprší dňa: ${dateStr}`;
                 
                 infoResolutionLimit.innerText = "Plné 1080p30";
@@ -755,12 +839,9 @@ Nech vás sila sprevádza.`
 
         // Zmena vybraného AI modelu
         function selectModel(modelId) {
-            // Kontrola či používateľ klikol na premium model bez aktívneho členstva
             if ((modelId === 'premium-v2' || modelId === 'premium-v3') && !userMembership.isPremium) {
-                // Vrátiť označenie na predchádzajúci free model
                 document.querySelector(`input[value="${selectedAIModel}"]`).checked = true;
                 
-                // Ponúknuť zakúpenie predplatného
                 openPricingModal();
                 openCustomModal(
                     "⭐ Vyžaduje sa Členstvo", 
@@ -826,9 +907,8 @@ Nech vás sila sprevádza.`
             pendingPlanDays = 0;
         }
 
-        // SPRACOVANIE PLATBY (SIMULÁCIA)
+        // SPRACOVANIE PLATBY (SIMULÁCIA + UKLADANIE DO INDEXEDDB)
         function processSimulatedPayment() {
-            // Výpočet dátumu expirácie odteraz
             const now = new Date();
             const expirationDate = new Date();
             expirationDate.setDate(now.getDate() + pendingPlanDays);
@@ -837,6 +917,9 @@ Nech vás sila sprevádza.`
             userMembership.plan = pendingPlanName;
             userMembership.expiresAt = expirationDate;
             userMembership.isPremium = true;
+
+            // Uložiť stav do IndexedDB
+            saveMembershipToDB(userMembership);
 
             // Automaticky prepnúť na Cinema Pro v2 model pri zakúpení
             selectedAIModel = 'premium-v2';
@@ -852,14 +935,13 @@ Nech vás sila sprevádza.`
 
             openCustomModal(
                 "✓ Platba prebehla úspešne",
-                `Ďakujeme! Balík '${pendingPlanName}' bol úspešne aktivovaný na ${pendingPlanDays} dní. Prémiové funkcie a rozlíšenie 1080p30 boli odomknuté.`
+                `Ďakujeme! Balík '${pendingPlanName}' bol úspešne aktivovaný na ${pendingPlanDays} dní a uložený do IndexedDB. Prémiové funkcie a rozlíšenie 1080p30 boli odomknuté.`
             );
         }
 
         // Simulácia okamžitého vypršania predplatného pre účely testovania
         function simulateExpirationNow() {
             if (userMembership.isPremium) {
-                // Nastavíme dátum expirácie na čas pred 1 sekundou
                 userMembership.expiresAt = new Date(Date.now() - 1000);
                 checkMembershipExpiration();
             }
@@ -906,7 +988,7 @@ Nech vás sila sprevádza.`
         }
 
 
-        // Kreslenie scény a animácie náhľadu (Zvyšok pôvodného kódu)
+        // Kreslenie scény a animácie náhľadu
         function loadTemplate(name) {
             textInput.value = templates[name];
             if (name === 'drama') {
@@ -1327,7 +1409,6 @@ Nech vás sila sprevádza.`
         // ==========================================================
 
         function startDeepThinkingProcess() {
-            // Kontrola expirácie pred spustením renderu
             checkMembershipExpiration();
 
             const audioMode = document.getElementById('audioDrone').value;
@@ -1339,7 +1420,6 @@ Nech vás sila sprevádza.`
             isPlaying = false;
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
-            // Nastavenie špecifických správ v uvažovaní na základe vybraného modelu
             let modelTitle = "Prebieha hĺbkové uvažovanie AI";
             let modelSubtitle = "Základná bezplatná analýza dát...";
             let customConsoleSteps = [];
@@ -1365,24 +1445,24 @@ Nech vás sila sprevádza.`
                     { text: "🔊 Pripravujem asynchrónny zapisovač audio-video toku...", delay: 500 }
                 ];
             } else if (selectedAIModel === 'premium-v2') {
-                modelTitle = "Cinema Pro v2: Pokročilé uvažovanie";
+                modelTitle = "Cinema Pro v2: Pokročilé uvažovanie (1080p30)";
                 modelSubtitle = "Prémiové spracovanie Full HD 1080p30 s filmovými algoritmami...";
                 customConsoleSteps = [
-                    { text: "🚀 Aktivujem Cinema Pro v2 kognitívny procesor...", delay: 500 },
-                    { text: "🔍 Hĺbková syntaktická analýza textu: Optimalizácia medzier a kontrastov...", delay: 600 },
-                    { text: "🎨 Aplikujem filmový antialiasing a vyhladzovanie typografie...", delay: 600 },
-                    { text: "✨ Výpočet plného 1080p30 (1920x1080) vektorového poľa pre export...", delay: 700 },
-                    { text: "🔊 Pripravujem pokročilé spájanie zvuku (Mixdown s plynulým fade-outom)...", delay: 600 }
+                    { text: "🚀 Aktivujem Cinema Pro v2 kognitívny procesor...", delay: 600 },
+                    { text: "🧠 ANALÝZA HLBKOVÉHO UVAŽOVANIA: Skenujem typografické uzly pre dokonalý kontrast v 1080p...", delay: 900 },
+                    { text: "🎨 Optimalizujem anti-aliasing pre vyhladzovanie písiem vo vysokom rozlíšení...", delay: 800 },
+                    { text: "🔊 Kalibrujem 1080p rendering plynulosti a synchronizujem 30 snímok za sekundu...", delay: 700 },
+                    { text: "✨ Generujem precízne matematické prechody a overujem IndexedDB členstvo...", delay: 600 }
                 ];
             } else if (selectedAIModel === 'premium-v3') {
-                modelTitle = "Ultra Thinking v3: Maximálne uvažovanie";
+                modelTitle = "Ultra Thinking v3: Priestorové uvažovanie (1080p30)";
                 modelSubtitle = "Prémiové spracovanie 1080p30 s plnou priestorovou 3D simuláciou...";
                 customConsoleSteps = [
-                    { text: "🌀 Aktivujem Ultra Thinking v3 hyper-dimenzionálny rendering...", delay: 400 },
-                    { text: "🔮 Prebieha hlboká priestorová 3D analýza scény a simulácia hviezdneho prachu...", delay: 500 },
-                    { text: "📐 Výpočet goniometrických uhlov a deformácie perspektívy v reálnom čase...", delay: 600 },
-                    { text: "✨ Rendering v plnom 1080p30 s prémiovou farebnou vernosťou...", delay: 700 },
-                    { text: "🔊 Pripravujem 3D priestorové uloženie audio stopy...", delay: 500 }
+                    { text: "🌀 Aktivujem Ultra Thinking v3 hyper-dimenzionálny rendering...", delay: 500 },
+                    { text: "🧠 HLBKOVÉ UVAŽOVANIE: Prepočítavam perspektívu 3D hviezdneho prachu a goniometrických uhlov...", delay: 1000 },
+                    { text: "📐 Výpočet sub-vektorových deformácií textu pre maximálnu simuláciu dĺžky...", delay: 900 },
+                    { text: "🎵 Syntetizujem priestorovú hĺbku audio toku pre čistý mixdown...", delay: 800 },
+                    { text: "🚀 Všetky systémy sú pripravené na stabilný Full HD 1080p30 export...", delay: 500 }
                 ];
             }
 
@@ -1434,7 +1514,7 @@ Nech vás sila sprevádza.`
 
 
         // ==========================================================
-        // OPRAVENÝ RENDER & ENKÓDOVANIE (720p vs 1080p BEZCHYBNÝ EXPORT)
+        // RENDER & ENKÓDOVANIE (720p vs 1080p PLNE ODBLOKOVANÝ EXPORT)
         // ==========================================================
 
         async function renderAndEncodeVideo() {
@@ -1447,13 +1527,14 @@ Nech vás sila sprevádza.`
             const fps = 30;
             const totalFrames = duration * fps;
             
-            // 1. Vytvorenie základného video streamu z canvasu
-            const stream = canvas.captureStream(fps);
+            // 1. Získanie video streamu z canvasu
+            const canvasStream = canvas.captureStream(fps);
             let chunks = [];
 
-            // 2. Audio Web API integrácia – spracovanie zvuku EŠTE PRED inicializáciou MediaRecorder
+            // 2. Audio Web API spracovanie zvuku EŠTE PRED spustením MediaRecorderu
             let audioCtx, dest;
             const audioMode = document.getElementById('audioDrone').value;
+            let audioTracks = [];
 
             if (audioMode !== 'none') {
                 try {
@@ -1492,17 +1573,24 @@ Nech vás sila sprevádza.`
                     gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime + duration - 2);
                     gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
                     
-                    const audioTracks = dest.stream.getAudioTracks();
-                    if (audioTracks.length > 0) {
-                        // KĽÚČOVÁ OPRAVA: Audio track pridáme do streamu pred vytvorením MediaRecorderu!
-                        stream.addTrack(audioTracks[0]);
-                    }
+                    audioTracks = dest.stream.getAudioTracks();
                 } catch(e) {
                     console.error("Nepodarilo sa inicializovať zvuk:", e);
                 }
             }
 
-            // 3. Výber najlepšieho podporovaného formátu podľa prehliadača (MP4 vs WebM)
+            // 3. Spojenie video stôp a audio stôp do JEDNÉHO kombinovaného streamu hneď na začiatku
+            let combinedStream;
+            if (audioTracks && audioTracks.length > 0) {
+                combinedStream = new MediaStream([
+                    ...stream.getVideoTracks(),
+                    ...audioTracks
+                ]);
+            } else {
+                combinedStream = stream;
+            }
+
+            // 4. Výber najlepšieho podporovaného formátu podľa prehliadača
             let selectedMimeType = '';
             let fileExtension = 'mp4';
 
@@ -1521,13 +1609,10 @@ Nech vás sila sprevádza.`
                 }
             }
 
-            // Určenie správnej koncovky súboru, aby ho dokázal prehrať natívny prehrávač
             if (selectedMimeType.includes('mp4')) {
                 fileExtension = 'mp4';
-            } else if (selectedMimeType.includes('webm')) {
-                fileExtension = 'webm';
             } else {
-                fileExtension = 'mp4';
+                fileExtension = 'webm';
             }
 
             const pFormat = document.createElement('p');
@@ -1539,10 +1624,10 @@ Nech vás sila sprevádza.`
             let recorder;
 
             try {
-                recorder = new MediaRecorder(stream, options);
+                recorder = new MediaRecorder(combinedStream, options);
             } catch (e) {
                 console.warn("Vybraný kodek zlyhal, prepínam na bezpečný fallback:", e);
-                recorder = new MediaRecorder(stream);
+                recorder = new MediaRecorder(combinedStream);
                 fileExtension = 'webm';
             }
 

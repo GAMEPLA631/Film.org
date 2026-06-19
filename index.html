@@ -214,9 +214,9 @@
                             <h3 class="font-cyber font-bold text-xs tracking-wider text-slate-200">KÓDOVANIE TITULKOV</h3>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="loadTemplate('sci-fi')" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-bold tracking-wide transition-colors font-cyber">Sci-Fi</button>
+                            <button onclick="loadTemplate('sci-fi')" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-bold tracking-wide transition-colors font-cyber font-semibold">Sci-Fi</button>
                             <span class="text-slate-700">|</span>
-                            <button onclick="loadTemplate('classic')" class="text-[10px] text-purple-400 hover:text-purple-300 font-bold tracking-wide transition-colors font-cyber">Klasická</button>
+                            <button onclick="loadTemplate('classic')" class="text-[10px] text-purple-400 hover:text-purple-300 font-bold tracking-wide transition-colors font-cyber font-semibold">Klasická</button>
                         </div>
                     </div>
                     
@@ -310,7 +310,8 @@
                                 <button onclick="setTheme('classic')" id="theme_classic" class="theme-btn border border-cyan-500/40 bg-cyan-950/20 text-xs py-2 rounded-xl text-cyan-300 transition-all font-medium font-cyber">Klasický Scroll</button>
                                 <button onclick="setTheme('fade')" id="theme_fade" class="theme-btn border border-white/5 bg-slate-950/40 text-xs py-2 rounded-xl text-slate-400 transition-all font-medium font-cyber">Fade Prechody</button>
                                 <button onclick="setTheme('neon_retro')" id="theme_neon_retro" class="theme-btn border border-white/5 bg-slate-950/40 text-xs py-2 rounded-xl text-slate-400 transition-all font-medium font-cyber">Retro Neon</button>
-                                <button onclick="setTheme('split_column')" id="theme_split_column" class="theme-btn border border-white/5 bg-slate-950/40 text-xs py-2 rounded-xl text-slate-400 transition-all font-medium font-cyber col-span-2">Split Column (Rozdelené stĺpce)</button>
+                                <button onclick="setTheme('split_column')" id="theme_split_column" class="theme-btn border border-white/5 bg-slate-950/40 text-xs py-2 rounded-xl text-slate-400 transition-all font-medium font-cyber">Rozdelené stĺpce</button>
+                                <button onclick="setTheme('gradual_scroll')" id="theme_gradual_scroll" class="theme-btn border border-white/5 bg-slate-950/40 text-xs py-2 rounded-xl text-slate-400 transition-all font-medium font-cyber">Postupný Scroll</button>
                             </div>
                         </div>
                     </div>
@@ -490,7 +491,7 @@
                         </div>
                         <p class="text-xs text-slate-400 mb-6 leading-relaxed">Celý rok bezstarostného prístupu s absolútne najpokročilejším modelom a VIP podporou.</p>
                         <ul class="space-y-3.5 text-[11px] text-slate-300 mb-8 border-t border-white/5 pt-5">
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Neobmedzený 4K a 1080p export</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Neobmedzený 4K and 1080p export</li>
                             <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> 1 rok plného prístupu</li>
                             <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Ultra-hlboké real-time uvažovanie</li>
                             <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> VIP asistenčný kanál</li>
@@ -953,7 +954,7 @@
             closePaymentGateway();
 
             playSound('success');
-            alertNotification(`Kanál "${userSubscription.plan}" bol úspešne prepojený. Platnosť do ${expiry.toLocaleDateString()}.`, "success");
+            alertNotification("Platobný kanál úspešne spárovaný. Prémiový prístup povolený.", "success");
         }
 
         // ŠABLÓNY TITULKOV
@@ -965,6 +966,7 @@
 HLAVNÝ KOZMICKÝ ARCHITEKT : Elon Musk
 
 AUTOR KVANTOVÉHO SCENÁRA : Jonathan Nolan
+
 PRODUCENTI ZO SÚHVEZDIA LYRA : Emma Thomas
 CHARLES ROVEN
 
@@ -1061,6 +1063,13 @@ Všetci podporovatelia CineCredits v2026`;
                 ctx.font = "16px 'Orbitron', sans-serif";
                 ctx.fillStyle = '#06b6d4';
                 ctx.fillText("Kyberpunkový tón a svietivosť povolená", canvas.width / 2, canvas.height / 2 + 25);
+            } else if (activeTheme === 'gradual_scroll') {
+                ctx.font = "bold 28px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillStyle = '#22d3ee';
+                ctx.fillText("POSTUPNÝ SCROLL", canvas.width / 2, canvas.height / 2 - 30);
+                ctx.font = "16px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillStyle = '#a78bfa';
+                ctx.fillText("Elegancia s fázovým vynáraním textu", canvas.width / 2, canvas.height / 2 + 25);
             } else {
                 ctx.font = "bold 28px 'Plus Jakarta Sans', sans-serif";
                 ctx.fillText("FILMOVÉ TITULKY", canvas.width / 2, canvas.height / 2 - 25);
@@ -1120,20 +1129,20 @@ Všetci podporovatelia CineCredits v2026`;
             // Hlboké uvažovanie vrátane dlhých 2027 úvah
             const thoughts = is2027Model ? [
                 "[2027 QUANTUM-JADRO] Štartujem kvantový rendering v ultra-vysokom rozlíšení 4K...",
-                "[2027 QUANTUM-JADRO] Inicializujem 60-sekundový fázový koprocesor na potlačenie šumu.",
-                "[2027 QUANTUM-JADRO] Prepočítavam subpixelové vykreslenie textu pre 4K rozteč.",
-                "[2027 QUANTUM-JADRO] Simulujem dynamický spektrálny vizualizér (audio sync) v reálnom čase.",
-                "[2027 QUANTUM-JADRO] Detegujem audio oscilácie pre ideálnu kinematografickú kompozíciu.",
-                "[2027 QUANTUM-JADRO] Kreslím holografický prach s fyzikálnym kmitaním.",
-                "[2027 QUANTUM-JADRO] Dokončujem export do MP4 so zapuzdrenou audio stopou..."
+                "[2027 QUANTUM-JADRO] Inicializujem fázový koprocesor na rekonštrukciu detailov.",
+                "[2027 QUANTUM-JADRO] Optimalizujem vyhladzovanie okrajov pre filmový vzhľad.",
+                "[2027 QUANTUM-JADRO] Prepájam audio oscilácie so spektrálnym jadrom.",
+                "[2027 QUANTUM-JADRO] Stabilizujem vertikálny časový posun.",
+                "[2027 QUANTUM-JADRO] Kreslím ambientný hviezdny prach.",
+                "[2027 QUANTUM-JADRO] Pripravujem MP4 kontajner na stiahnutie..."
             ] : [
                 "Mapujem polia záverečných titulkov...",
-                "Hľadám rozloženie dvojíc v poli kľúč:hodnota.",
-                "Nastavujem optickú mriežku pre rozlíšenie " + width + "x" + height + "px.",
-                "Stabilizujem fyzikálny koprocesor scrollovania na snímkovanie 30 FPS.",
-                "Kalkulujem ideálne rozostupy písma s ohľadom na celkovú dĺžku animácie.",
-                "Spúšťam dynamický generátor vesmírneho šumu na pozadí.",
-                "Aplikujem subpixelové antialiasingové filtre pre čisté vykreslenie textu."
+                "Čítam štruktúrované bloky a oddeľovače.",
+                "Nastavujem rozlíšenie plátna na " + width + "x" + height + "px.",
+                "Stabilizujem snímkovanie scrollovania na 30 FPS.",
+                "Prepočítavam rozostupy, aby texty neboli na sebe nalepené.",
+                "Spúšťam generátor ambientného prachu na pozadí.",
+                "Aplikujem vyhladzovacie filtre pre dokonalú čitateľnosť textu."
             ];
 
             function addThought(text) {
@@ -1179,7 +1188,7 @@ Všetci podporovatelia CineCredits v2026`;
                 
                 audioSourceNode.connect(destNode);
                 
-                // Tiež chceme aby používateľ počul zvuk počas generovania
+                // Chceme aby používateľ počul zvuk počas generovania
                 audioSourceNode.connect(audioCtx.destination);
                 
                 // Pridanie audio tracku do nahrávacieho streamu
@@ -1203,7 +1212,7 @@ Všetci podporovatelia CineCredits v2026`;
                 }
                 mediaRecorder = new MediaRecorder(combinedStream, options);
             } catch(e) {
-                console.warn("Záložný kodek rekordéra:", e);
+                console.warn("Záložný rekordér:", e);
                 mediaRecorder = new MediaRecorder(combinedStream);
             }
 
@@ -1238,9 +1247,9 @@ Všetci podporovatelia CineCredits v2026`;
 
                         overlay.classList.add('hidden');
                         isGenerating = false;
-                        document.getElementById('renderingStatus').innerText = "Hotovo / Sťahujem";
+                        document.getElementById('renderingStatus').innerText = "Hotovo";
                         playSound('render_end');
-                        alertNotification("Video bolo úspešne vygenerované a stiahnuté s audio stopou!", "success");
+                        alertNotification("Video vygenerované a stiahnuté!", "success");
                         drawPreviewFrame();
                     };
                     return;
@@ -1278,7 +1287,8 @@ Všetci podporovatelia CineCredits v2026`;
                 ctx.fillStyle = '#ffffff';
                 
                 if (activeTheme === 'classic') {
-                    const totalScrollHeight = parsedCredits.length * 52 + height;
+                    // SPRAVEDLIVÉ ROZSTUPY (Texty nie sú na sebe nalepené)
+                    const totalScrollHeight = parsedCredits.length * 68 + height;
                     const currentY = height - (frame / totalFrames) * totalScrollHeight;
 
                     let currentOffset = currentY;
@@ -1288,27 +1298,70 @@ Všetci podporovatelia CineCredits v2026`;
                             ctx.fillStyle = '#ffffff';
                             ctx.textAlign = 'center';
                             ctx.fillText(item.text, width / 2, currentOffset);
-                            currentOffset += 48;
+                            currentOffset += 60; // Veľký, pekný rozostup
                         } else if (item.type === 'pair') {
                             ctx.textAlign = 'right';
                             ctx.font = `${width * 0.019}px 'Plus Jakarta Sans', sans-serif`;
                             ctx.fillStyle = '#94a3b8';
-                            ctx.fillText(item.role, width / 2 - 30, currentOffset);
+                            ctx.fillText(item.role, width / 2 - 35, currentOffset);
 
                             ctx.textAlign = 'left';
                             ctx.font = `bold ${width * 0.019}px 'Plus Jakarta Sans', sans-serif`;
                             ctx.fillStyle = '#ffffff';
-                            ctx.fillText(item.name, width / 2 + 30, currentOffset);
-                            currentOffset += 44;
+                            ctx.fillText(item.name, width / 2 + 35, currentOffset);
+                            currentOffset += 50; // Veľký, pekný rozostup
                         } else if (item.type === 'space') {
-                            currentOffset += 38;
+                            currentOffset += 65; // Veľký, pekný prázdny rozostup
                         }
+                    });
+
+                } else if (activeTheme === 'gradual_scroll') {
+                    // NOVA ANIMACIA: POSTUPNÝ SCROLL S PROGRESÍVNYM REVEALOM (Vynáranie textu)
+                    const totalScrollHeight = parsedCredits.length * 68 + height;
+                    const currentY = height - (frame / totalFrames) * totalScrollHeight;
+
+                    let currentOffset = currentY;
+                    parsedCredits.forEach(item => {
+                        // Vypočítame opacitu podľa pozície Y na obrazovke
+                        let opacity = 1.0;
+                        if (currentOffset > height * 0.75) {
+                            // Fade-in v dolnej štvrtine
+                            opacity = Math.max(0, (height - currentOffset) / (height * 0.25));
+                        } else if (currentOffset < height * 0.25) {
+                            // Fade-out v hornej štvrtine
+                            opacity = Math.max(0, currentOffset / (height * 0.25));
+                        }
+
+                        ctx.save();
+                        ctx.globalAlpha = opacity;
+
+                        if (item.type === 'header') {
+                            ctx.font = `bold ${width * 0.024}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = '#22d3ee';
+                            ctx.textAlign = 'center';
+                            ctx.fillText(item.text, width / 2, currentOffset);
+                            currentOffset += 60;
+                        } else if (item.type === 'pair') {
+                            ctx.textAlign = 'right';
+                            ctx.font = `${width * 0.019}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = '#94a3b8';
+                            ctx.fillText(item.role, width / 2 - 35, currentOffset);
+
+                            ctx.textAlign = 'left';
+                            ctx.font = `bold ${width * 0.019}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillText(item.name, width / 2 + 35, currentOffset);
+                            currentOffset += 50;
+                        } else if (item.type === 'space') {
+                            currentOffset += 65;
+                        }
+                        ctx.restore();
                     });
 
                 } else if (activeTheme === 'starwars') {
                     ctx.save();
                     const progress = frame / totalFrames;
-                    const startY = height - progress * (parsedCredits.length * 48 + height);
+                    const startY = height - progress * (parsedCredits.length * 55 + height);
 
                     let currentOffset = startY;
                     parsedCredits.forEach(item => {
@@ -1320,20 +1373,19 @@ Všetci podporovatelia CineCredits v2026`;
                             ctx.textAlign = 'center';
                             
                             if (item.type === 'header') {
-                                                    ctx.font = `bold ${width * 0.026 * scale}px 'Cinzel', serif`;
+                                ctx.font = `bold ${width * 0.026 * scale}px 'Cinzel', serif`;
                                 ctx.fillText(item.text.toUpperCase(), width / 2, currentOffset);
                             } else if (item.type === 'pair') {
                                 ctx.font = `bold ${width * 0.019 * scale}px 'Cinzel', serif`;
                                 ctx.fillText(`${item.role} : ${item.name}`, width / 2, currentOffset);
                             }
                         }
-                        currentOffset += 48 * scale;
+                        currentOffset += 55 * scale;
                     });
                     ctx.restore();
 
                 } else if (activeTheme === 'neon_retro') {
-                    // RETRO NEON ANIMÁCIA
-                    const totalScrollHeight = parsedCredits.length * 52 + height;
+                    const totalScrollHeight = parsedCredits.length * 68 + height;
                     const currentY = height - (frame / totalFrames) * totalScrollHeight;
 
                     let currentOffset = currentY;
@@ -1345,29 +1397,28 @@ Všetci podporovatelia CineCredits v2026`;
                             ctx.shadowBlur = 10;
                             ctx.textAlign = 'center';
                             ctx.fillText(item.text.toUpperCase(), width / 2, currentOffset);
-                            ctx.shadowBlur = 0; // reset
-                            currentOffset += 48;
+                            ctx.shadowBlur = 0;
+                            currentOffset += 60;
                         } else if (item.type === 'pair') {
                             ctx.textAlign = 'right';
                             ctx.font = `${width * 0.019}px 'Orbitron', sans-serif`;
                             ctx.fillStyle = '#06b6d4';
                             ctx.shadowColor = '#06b6d4';
                             ctx.shadowBlur = 8;
-                            ctx.fillText(item.role, width / 2 - 30, currentOffset);
+                            ctx.fillText(item.role, width / 2 - 35, currentOffset);
 
                             ctx.textAlign = 'left';
                             ctx.font = `bold ${width * 0.019}px 'Orbitron', sans-serif`;
                             ctx.fillStyle = '#ffffff';
                             ctx.shadowBlur = 0;
-                            ctx.fillText(item.name, width / 2 + 30, currentOffset);
-                            currentOffset += 44;
+                            ctx.fillText(item.name, width / 2 + 35, currentOffset);
+                            currentOffset += 50;
                         } else if (item.type === 'space') {
-                            currentOffset += 38;
+                            currentOffset += 65;
                         }
                     });
 
                 } else if (activeTheme === 'split_column') {
-                    // SPLIT COLUMN (ROZDELENÉ STĹPCE)
                     const totalItems = parsedCredits.filter(i => i.type !== 'space').length;
                     const itemDuration = totalFrames / totalItems;
                     const currentIndex = Math.floor(frame / itemDuration);
@@ -1377,7 +1428,6 @@ Všetci podporovatelia CineCredits v2026`;
                         const frameInItem = frame % itemDuration;
                         let transitionProgress = 1.0;
 
-                        // Slide in and Slide out logic
                         if (frameInItem < itemDuration * 0.2) {
                             transitionProgress = frameInItem / (itemDuration * 0.2);
                         } else if (frameInItem > itemDuration * 0.8) {
@@ -1390,14 +1440,12 @@ Všetci podporovatelia CineCredits v2026`;
                             ctx.fillStyle = `rgba(255, 255, 255, ${transitionProgress})`;
                             ctx.fillText(currentItem.text, width / 2, height / 2);
                         } else if (currentItem.type === 'pair') {
-                            // Rola prichádza zľava
                             ctx.textAlign = 'right';
                             ctx.font = `${width * 0.024}px 'Plus Jakarta Sans', sans-serif`;
                             ctx.fillStyle = `rgba(148, 163, 184, ${transitionProgress})`;
                             const roleX = (width / 2 - 40) - (1 - transitionProgress) * 100;
                             ctx.fillText(currentItem.role, roleX, height / 2);
 
-                            // Meno prichádza sprava
                             ctx.textAlign = 'left';
                             ctx.font = `bold ${width * 0.024}px 'Plus Jakarta Sans', sans-serif`;
                             ctx.fillStyle = `rgba(255, 255, 255, ${transitionProgress})`;

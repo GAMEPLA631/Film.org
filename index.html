@@ -1,1743 +1,1465 @@
 <!DOCTYPE html>
-<html lang="sk" class="h-full bg-slate-950 text-slate-100">
+<html lang="sk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineCredits - Profesionálny Generátor Filmových Titulkov</title>
+    <title>CineCredits - Futuristický 4K Filmový Generátor Titulkov</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cinema: {
-                            gold: '#D4AF37',
-                            goldHover: '#C5A028',
-                            dark: '#030712',
-                            card: '#0B0F19',
-                            accent: '#3B82F6'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&family=JetBrains+Mono:wght@400;700&family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@500;700;900&family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet">
     
     <style>
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #030712;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1F2937;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #374151;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #02040a;
+            color: #f3f4f6;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 40%),
+                radial-gradient(at 50% 50%, rgba(8, 47, 73, 0.15) 0px, transparent 70%);
+            background-attachment: fixed;
         }
         
-        .thinking-glow {
-            box-shadow: 0 0 25px rgba(59, 130, 246, 0.15);
-            animation: pulse-glow 2s infinite ease-in-out;
+        .font-cinema {
+            font-family: 'Cinzel', serif;
         }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); }
-            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.35); }
+        
+        .font-cyber {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Sci-Fi Mriežka na pozadí */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(18, 24, 38, 0.3) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(18, 24, 38, 0.3) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+            transform: perspective(600px) rotateX(20deg);
+            transform-origin: top;
+            animation: gridScroll 30s linear infinite;
+        }
+
+        @keyframes gridScroll {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 1000px; }
+        }
+
+        /* Skenovací Laserový Lúč */
+        .laser-scanner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.6), transparent);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.8);
+            pointer-events: none;
+            z-index: 40;
+            animation: scanLaser 6s linear infinite;
+        }
+
+        @keyframes scanLaser {
+            0% { transform: translateY(-10vh); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(110vh); opacity: 0; }
+        }
+
+        /* Maximálny Glassmorphism */
+        .glass-panel {
+            background: rgba(8, 12, 24, 0.5);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.7),
+                        inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(6, 182, 212, 0.3);
+            box-shadow: 0 15px 50px -5px rgba(0, 0, 0, 0.8),
+                        0 0 30px 0 rgba(6, 182, 212, 0.08),
+                        inset 0 1px 2px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .aurora-orb {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(140px);
+            z-index: -2;
+            pointer-events: none;
+            opacity: 0.25;
+            mix-blend-mode: screen;
+        }
+
+        .orb-blue {
+            background: radial-gradient(circle, #0891b2, transparent 70%);
+            top: 15%;
+            left: 5%;
+            animation: floatOrb 20s ease-in-out infinite alternate;
+        }
+
+        .orb-purple {
+            background: radial-gradient(circle, #8b5cf6, transparent 70%);
+            bottom: 10%;
+            right: 10%;
+            animation: floatOrb 25s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(70px, 50px) scale(1.2); }
+        }
+
+        /* Neónové pulzovanie pre 2027 novinky */
+        .neon-pulse {
+            animation: neonPulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            0% { text-shadow: 0 0 5px rgba(236, 72, 153, 0.5), 0 0 10px rgba(236, 72, 153, 0.3); }
+            100% { text-shadow: 0 0 15px rgba(236, 72, 153, 1), 0 0 25px rgba(236, 72, 153, 0.7); }
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(5, 5, 10, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(6, 182, 212, 0.25);
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(6, 182, 212, 0.6);
         }
     </style>
 </head>
-<body class="h-full flex flex-col font-sans overflow-x-hidden">
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden relative">
 
-    <!-- Hlavná navigácia -->
-    <header class="border-b border-slate-900 bg-slate-950/80 backdrop-blur px-6 py-4 flex items-center justify-between sticky top-0 z-40">
-        <div class="flex items-center gap-3">
-            <svg class="w-8 h-8 text-cinema-gold animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1-1H3a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
-            </svg>
-            <div>
-                <h1 class="text-xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-cinema-gold">CineCredits</h1>
-                <p class="text-[10px] text-slate-400 tracking-widest uppercase">Generátor 1080p30 Filmových Titulkov</p>
+    <!-- HUD a Pozadie Efekty -->
+    <div class="cyber-grid"></div>
+    <div class="laser-scanner"></div>
+    <div class="aurora-orb orb-blue"></div>
+    <div class="aurora-orb orb-purple"></div>
+
+    <!-- Horné Menu -->
+    <header class="border-b border-white/5 bg-slate-950/30 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="relative flex items-center justify-center">
+                    <div class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full blur opacity-40 animate-pulse"></div>
+                    <i class="fa-solid fa-circle-nodes text-cyan-400 text-3xl relative animate-spin" style="animation-duration: 10s;"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-cyber text-xl font-black tracking-[0.25em] bg-gradient-to-r from-cyan-400 via-teal-300 to-purple-500 bg-clip-text text-transparent">CINECREDITS</span>
+                    <span class="text-[9px] text-cyan-400/70 tracking-[0.3em] font-cyber font-bold uppercase -mt-0.5">Quantum Video Nexus v2.6</span>
+                </div>
             </div>
-        </div>
-        
-        <!-- Status predplatného v hlavičke -->
-        <div class="flex items-center gap-4">
-            <div id="headerMembershipBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
-                <span class="w-2 h-2 rounded-full bg-slate-500" id="statusDot"></span>
-                <span class="text-slate-300 font-medium" id="statusText">Účet: Bezplatný (Free)</span>
+            
+            <!-- Status členstva v menu -->
+            <div class="flex items-center gap-4">
+                <div id="statusBadge" class="px-4 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 bg-white/5 border border-white/10 backdrop-blur-md text-slate-300">
+                    <span class="w-2 h-2 rounded-full bg-slate-500 animate-pulse"></span>
+                    <span class="font-cyber">Načítavam jadro...</span>
+                </div>
+                <button onclick="scrollToPricing()" class="relative group overflow-hidden bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black px-6 py-2.5 rounded-xl text-[10px] tracking-widest uppercase transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center gap-2 font-cyber">
+                    <i class="fa-solid fa-network-wired text-slate-950"></i> Upgrade
+                </button>
             </div>
-            <button onclick="openPricingModal()" class="px-4 py-1.5 text-xs font-bold rounded-lg bg-gradient-to-r from-cinema-gold to-amber-500 hover:from-amber-500 hover:to-cinema-gold text-slate-950 transition duration-300 shadow-md shadow-cinema-gold/10">
-                Členstvo & Balíky
-            </button>
         </div>
     </header>
 
-    <!-- Hlavný Layout -->
-    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden">
+    <!-- Hlavný obsah -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full relative z-10">
         
-        <!-- Ľavá strana: Nastavenia a Vstup (5 stĺpcov) -->
-        <section class="lg:col-span-5 border-r border-slate-900 bg-slate-950 flex flex-col overflow-y-auto p-6 space-y-6">
+        <!-- Upozornenie na exspiráciu členstva -->
+        <div id="expiryAlert" class="hidden mb-6 bg-red-950/20 border border-red-500/30 rounded-2xl p-5 backdrop-blur-xl flex items-start gap-4">
+            <div class="p-3 bg-red-500/10 rounded-xl border border-red-500/20 text-red-400">
+                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 class="text-red-400 font-bold text-sm tracking-wide font-cyber">PRÉMIOVÝ PROTOKOL EXSPIROVAL</h4>
+                <p class="text-xs text-red-300/80 mt-1" id="expiryAlertText">Platnosť vášho prémiového plánu vypršala. Prístup k 1080p, 4K a real-time Deep Thinking bol uzamknutý.</p>
+            </div>
+            <button onclick="scrollToPricing()" class="bg-red-500 hover:bg-red-400 text-slate-950 text-xs px-4 py-2 rounded-xl transition-all font-bold tracking-wider uppercase font-cyber">
+                Obnoviť kanál
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- Panel Aktívneho Členstva a Expirácie -->
-            <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-900 space-y-3">
-                <div class="flex justify-between items-center">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Moje Členstvo</span>
-                    <span id="expirationCountdown" class="text-xs font-mono text-cinema-gold">Neobmedzený prístup</span>
-                </div>
-                <div class="p-3 bg-slate-950 rounded-lg flex items-center justify-between border border-slate-900">
-                    <div>
-                        <div class="text-sm font-bold text-white" id="infoPlanName">Základný účet</div>
-                        <div class="text-[10px] text-slate-500 font-mono" id="infoPlanDetails">Platnosť: Navždy bezplatne</div>
-                    </div>
-                    <span class="text-[10px] uppercase font-mono tracking-widest text-slate-400 px-2 py-0.5 rounded border border-slate-800" id="infoResolutionLimit">720p30 Limit</span>
-                </div>
-                <!-- Simulátor času pre testovanie expirácie -->
-                <div id="testExpPanel" class="hidden text-center p-2 bg-red-950/20 rounded border border-red-900/30">
-                    <p class="text-[10px] text-red-400 font-mono mb-1.5">Simulačný panel pre vývojára (Testovanie expirácie):</p>
-                    <button onclick="simulateExpirationNow()" class="px-3 py-1 bg-red-600/30 hover:bg-red-600/50 text-red-200 rounded text-[10px] font-mono transition">
-                        ⚡ Vypršať členstvo ihneď
-                    </button>
-                </div>
-            </div>
-
-            <!-- Výber Modelu (Bezplatné vs Platené) -->
-            <div>
-                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2.5">Výber AI Modelu</label>
-                <div class="space-y-2">
-                    <!-- Free Model v1 -->
-                    <label class="flex items-center justify-between p-3 rounded-lg border border-slate-800 bg-slate-900/30 hover:bg-slate-900/50 cursor-pointer transition">
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="aiModelRadio" value="free-v1" checked onchange="selectModel('free-v1')" class="text-cinema-gold focus:ring-cinema-gold">
-                            <div>
-                                <span class="block font-semibold text-sm text-white">Free model v1</span>
-                                <span class="text-[10px] text-slate-400">Neobmedzený • Standard rendering (Max 720p)</span>
-                            </div>
-                        </div>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 uppercase font-mono">Zadarmo</span>
-                    </label>
-
-                    <!-- Free Model v1.1 -->
-                    <label class="flex items-center justify-between p-3 rounded-lg border border-slate-800 bg-slate-900/30 hover:bg-slate-900/50 cursor-pointer transition">
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="aiModelRadio" value="free-v1.1" onchange="selectModel('free-v1.1')" class="text-cinema-gold focus:ring-cinema-gold">
-                            <div>
-                                <span class="block font-semibold text-sm text-white">Free model v1.1</span>
-                                <span class="text-[10px] text-slate-400">Neobmedzený • Optimalizovaná plynulosť (Max 720p)</span>
-                            </div>
-                        </div>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 uppercase font-mono">Zadarmo</span>
-                    </label>
-
-                    <!-- Cinema Pro v2 (Platený) -->
-                    <label id="modelLabelV2" class="flex items-center justify-between p-3 rounded-lg border border-slate-900/60 bg-slate-950 hover:bg-slate-900/40 cursor-pointer transition relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-r from-cinema-gold/5 to-transparent pointer-events-none"></div>
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="aiModelRadio" value="premium-v2" onchange="selectModel('premium-v2')" class="text-cinema-gold focus:ring-cinema-gold">
-                            <div>
-                                <span class="flex items-center gap-1.5 font-semibold text-sm text-white">
-                                    Cinema Pro v2
-                                    <svg class="w-3.5 h-3.5 text-cinema-gold" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                                </span>
-                                <span class="text-[10px] text-slate-400">Pokročilé uvažovanie • Filmové efekty (Plné 1080p)</span>
-                            </div>
-                        </div>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-cinema-gold/10 text-cinema-gold border border-cinema-gold/20 uppercase font-mono" id="badgeV2">Premium</span>
-                    </label>
-
-                    <!-- Ultra Thinking v3 (Platený) -->
-                    <label id="modelLabelV3" class="flex items-center justify-between p-3 rounded-lg border border-slate-900/60 bg-slate-950 hover:bg-slate-900/40 cursor-pointer transition relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent pointer-events-none"></div>
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="aiModelRadio" value="premium-v3" onchange="selectModel('premium-v3')" class="text-cinema-gold focus:ring-cinema-gold">
-                            <div>
-                                <span class="flex items-center gap-1.5 font-semibold text-sm text-white">
-                                    Ultra Thinking v3
-                                    <svg class="w-3.5 h-3.5 text-blue-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path></svg>
-                                </span>
-                                <span class="text-[10px] text-slate-400">Maximálne hĺbkové uvažovanie • Priestorový 3D render (Plné 1080p)</span>
-                            </div>
-                        </div>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase font-mono" id="badgeV3">Premium</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Sekcia: Šablóny -->
-            <div>
-                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-3">Rýchla šablóna filmu</label>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="loadTemplate('blockbuster')" class="px-3 py-2 text-xs rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-cinema-gold/50 transition text-left">
-                        <span class="block font-semibold text-white">Sci-Fi Blockbuster</span>
-                        <span class="text-[10px] text-slate-400">Klasické rolovanie</span>
-                    </button>
-                    <button onclick="loadTemplate('drama')" class="px-3 py-2 text-xs rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-cinema-gold/50 transition text-left">
-                        <span class="block font-semibold text-white">Komorná Dráma</span>
-                        <span class="text-[10px] text-slate-400">Postupné stmievanie</span>
-                    </button>
-                    <button onclick="loadTemplate('star')" class="px-3 py-2 text-xs rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-cinema-gold/50 transition text-left">
-                        <span class="block font-semibold text-white">Galaktická Sága</span>
-                        <span class="text-[10px] text-slate-400">3D Perspektíva</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Sekcia: Textový editor titulkov -->
-            <div class="flex-1 flex flex-col min-h-[300px]">
-                <div class="flex items-center justify-between mb-2">
-                    <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Obsah a štruktúra titulkov</label>
-                    <span class="text-[10px] text-slate-500 font-mono">Použite ':' pre rolu a meno</span>
-                </div>
-                <textarea id="creditsText" class="w-full flex-1 p-4 rounded-xl border border-slate-800 bg-slate-900/50 font-mono text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-cinema-gold/50 focus:border-transparent resize-none leading-relaxed" placeholder="Napíšte sem roly a účinkujúcich..."></textarea>
-            </div>
-
-            <!-- Sekcia: Nastavenie dizajnu -->
-            <div class="space-y-4 bg-slate-900/30 p-4 rounded-xl border border-slate-900">
-                <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Konfigurácia Vzhľadu</h3>
+            <!-- ĽAVÝ PANEL: Nastavenia a Text (5 stĺpcov) -->
+            <div class="lg:col-span-5 space-y-6">
                 
-                <!-- Štýl animácie -->
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1.5">Štýl animácie</label>
-                    <select id="animationStyle" onchange="updatePreviewSettings()" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-cinema-gold">
-                        <option value="scroll">Klasické Vertikálne Rolovanie (Scroll)</option>
-                        <option value="fade">Filmové Postupné Stmievanie (Fade Pages)</option>
-                        <option value="starwars">Hviezdna Perspektíva (3D Space)</option>
-                        <option value="minimal">Moderný Minimalistický Split</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <!-- Typografia -->
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1.5">Písmo</label>
-                        <select id="fontFamily" onchange="updatePreviewSettings()" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-cinema-gold">
-                            <option value="Cinzel">Cinzel (Epické / Historické)</option>
-                            <option value="Inter">Inter (Moderné / Clean)</option>
-                            <option value="Playfair Display">Playfair (Umelecké / Dráma)</option>
-                            <option value="JetBrains Mono">JetBrains (Sci-Fi / Technické)</option>
-                        </select>
-                    </div>
-
-                    <!-- Farebná schéma -->
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1.5">Farba mien</label>
-                        <select id="colorScheme" onchange="updatePreviewSettings()" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-cinema-gold">
-                            <option value="gold">Cine Gold (#D4AF37)</option>
-                            <option value="white">Čistá Biela</option>
-                            <option value="silver">Strieborno Šedá</option>
-                            <option value="cyan">Sci-Fi Azúrová</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <!-- Trvanie videa -->
-                    <div>
-                        <label class="text-xs text-slate-400 block mb-1.5">Dĺžka videa (Sekundy)</label>
-                        <input type="number" id="videoDuration" onchange="updatePreviewSettings()" min="5" max="120" value="15" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-cinema-gold">
+                <!-- KROK 1: Text a Obsadenie -->
+                <div class="glass-panel rounded-3xl p-6 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-24 h-[1px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center font-black text-xs font-cyber">01</span>
+                            <h3 class="font-cyber font-bold text-xs tracking-wider text-slate-200">KÓDOVANIE TITULKOV</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="loadTemplate('sci-fi')" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-bold tracking-wide transition-colors font-cyber">Sci-Fi</button>
+                            <span class="text-slate-700">|</span>
+                            <button onclick="loadTemplate('classic')" class="text-[10px] text-purple-400 hover:text-purple-300 font-bold tracking-wide transition-colors font-cyber">Klasická</button>
+                        </div>
                     </div>
                     
-                    <!-- Hudobný podmaz -->
+                    <textarea id="creditsText" rows="9" class="w-full bg-slate-950/70 border border-white/5 rounded-2xl p-4 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 font-mono transition-all leading-relaxed placeholder-slate-600" placeholder="REŽISÉR : Christopher Nolan&#10;SCENÁR : Christopher Nolan&#10;&#10;PRODUCENT : Robert Downey"></textarea>
+                </div>
+
+                <!-- KROK 2: HUDBA (MP3 Audio Upload) -->
+                <div class="glass-panel rounded-3xl p-6 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-32 h-[1px] bg-gradient-to-r from-transparent via-teal-400 to-transparent"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 flex items-center justify-center font-black text-xs font-cyber">02</span>
+                            <h3 class="font-cyber font-bold text-xs tracking-wider text-slate-200">ZVUKOVÝ PROTOKOL</h3>
+                        </div>
+                        <span id="audioStatus" class="text-[9px] font-cyber text-slate-500 uppercase">Žiadny zvuk</span>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <label class="flex-1 flex flex-col items-center justify-center border border-dashed border-white/10 hover:border-cyan-500/30 bg-slate-950/40 hover:bg-slate-950/70 rounded-2xl p-4 cursor-pointer transition-all">
+                            <i class="fa-solid fa-music text-cyan-400 text-lg mb-1 animate-bounce"></i>
+                            <span class="text-[10px] font-cyber font-bold text-slate-300">Nahrať vlastné MP3</span>
+                            <span class="text-[8px] text-slate-500 mt-0.5">Veľkosť max 15MB</span>
+                            <input type="file" id="audioUpload" accept="audio/mp3, audio/*" class="hidden" onchange="handleAudioUpload(event)">
+                        </label>
+                        
+                        <div class="flex flex-col gap-2">
+                            <button id="playAudioBtn" onclick="toggleUploadedAudio()" class="p-3 rounded-xl bg-white/5 border border-white/5 hover:border-teal-500/30 text-teal-400 disabled:opacity-40 transition-all" disabled>
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <button id="removeAudioBtn" onclick="removeUploadedAudio()" class="p-3 rounded-xl bg-white/5 border border-white/5 hover:border-red-500/30 text-red-400 disabled:opacity-40 transition-all" disabled>
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KROK 3: AI Výpočtové Jadrá a 2027 modely -->
+                <div class="glass-panel rounded-3xl p-6 space-y-4 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-[1px] bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center font-black text-xs font-cyber">03</span>
+                        <h3 class="font-cyber font-bold text-xs tracking-wider text-slate-200">AI PROCESOR & 4K</h3>
+                    </div>
+
+                    <!-- Modely vrátane 2027 -->
                     <div>
-                        <label class="text-xs text-slate-400 block mb-1.5">Filmový zvuk</label>
-                        <select id="audioDrone" onchange="handleAudioModeChange()" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-cinema-gold">
-                            <option value="none">Bez zvuku</option>
-                            <option value="synth">Ambientný basový dron (Syntetizovaný)</option>
-                            <option value="custom">Vlastná hudba (Nahrať súbor...)</option>
+                        <label class="block text-[10px] text-slate-400 mb-2 font-bold tracking-wider uppercase font-cyber">Vybrať jadro generátora:</label>
+                        <select id="modelSelector" onchange="handleModelChange()" class="w-full bg-slate-950/80 border border-white/10 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 transition-all font-semibold font-cyber">
+                            <!-- Free -->
+                            <option value="free_v1" class="text-slate-300">Free Model v1 (Zadarmo - Max 720p30)</option>
+                            <option value="free_v1.1" class="text-slate-300">Free Model v1.1 (Zadarmo - Max 720p30)</option>
+                            <!-- Premium -->
+                            <option value="premium_deep_v2" disabled class="text-purple-400">Premium Deep Thinking v2 (PRO/VIP - 1080p30)</option>
+                            <option value="premium_realtime_v3" disabled class="text-purple-400">Premium Real-Time Ultra v3 (PRO/VIP - 1080p30)</option>
+                            <!-- EXTREME 2027 MODELS -->
+                            <option value="quantum_4k_2027" disabled class="text-pink-400">🚀 Quantum 4K-Nexus (Novinka Q1 2027 - Real 4K30)</option>
+                            <option value="hyper_real_2027" disabled class="text-pink-400">☄️ HyperReal-Cinema 4K (Novinka Q3 2027 - Real 4K30)</option>
                         </select>
                     </div>
+
+                    <!-- Rozlíšenie a Snímky -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-1.5 font-bold tracking-wider uppercase font-cyber">Rozlíšenie:</label>
+                            <div id="resolutionBadge" class="w-full bg-slate-950/60 border border-white/5 rounded-xl p-3 text-center text-xs font-bold text-slate-400 tracking-wider font-cyber">
+                                720p (1280x720)
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-1.5 font-bold tracking-wider uppercase font-cyber">Snímkovanie:</label>
+                            <div id="fpsBadge" class="w-full bg-slate-950/60 border border-white/5 rounded-xl p-3 text-center text-xs font-bold text-slate-400 tracking-wider font-cyber">
+                                30 FPS
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Štýl, Trvanie a Animácie -->
+                    <div class="space-y-4 pt-1">
+                        <div>
+                            <div class="flex justify-between text-[10px] text-slate-400 mb-2 font-cyber">
+                                <span class="font-bold tracking-wider uppercase">Dĺžka Renderovania</span>
+                                <span id="durationVal" class="text-cyan-400 font-bold">10 sekúnd</span>
+                            </div>
+                            <input type="range" id="animDuration" min="5" max="30" value="10" oninput="document.getElementById('durationVal').innerText = this.value + ' sekúnd'" class="w-full accent-cyan-400 bg-slate-950 h-1.5 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-2 font-bold tracking-wider uppercase font-cyber">Animácia Titulkov:</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="setTheme('starwars')" id="theme_starwars" class="theme-btn border border-white/5 bg-slate-950/40 text-xs py-2 rounded-xl text-slate-400 transition-all font-medium font-cyber">Hviezdne Vojny</button>
+                                <button onclick="setTheme('classic')" id="theme_classic" class="theme-btn border border-cyan-500/40 bg-cyan-950/20 text-xs py-2 rounded-xl text-cyan-300 transition-all font-medium font-cyber">Klasický Scroll</button>
+                                <button onclick="setTheme('fade')" id="theme_fade" class="theme-btn border border-white/5 bg-slate-950/40 text-xs py-2 rounded-xl text-slate-400 transition-all font-medium font-cyber">Fade Prechody</button>
+                                <button onclick="setTheme('neon_retro')" id="theme_neon_retro" class="theme-btn border border-white/5 bg-slate-950/40 text-xs py-2 rounded-xl text-slate-400 transition-all font-medium font-cyber">Retro Neon</button>
+                                <button onclick="setTheme('split_column')" id="theme_split_column" class="theme-btn border border-white/5 bg-slate-950/40 text-xs py-2 rounded-xl text-slate-400 transition-all font-medium font-cyber col-span-2">Split Column (Rozdelené stĺpce)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hlavné Tlačidlo na Generovanie -->
+                    <button id="generateBtn" onclick="startGeneration()" class="w-full mt-4 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-cyan-300 hover:to-purple-500 text-slate-950 font-black py-4 px-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 tracking-widest font-cyber text-xs shadow-[0_0_25px_rgba(6,182,212,0.2)] hover:shadow-[0_0_35px_rgba(6,182,212,0.4)]">
+                        <i class="fa-solid fa-play text-slate-950 text-sm"></i> SPRACOVAŤ & AUTOMATICKY STIAHNUŤ (MP4)
+                    </button>
                 </div>
 
-                <!-- Blok pre nahratie vlastného audio súboru -->
-                <div id="customAudioBlock" class="hidden border border-slate-800 bg-slate-950/60 p-3 rounded-lg space-y-2">
-                    <label class="text-xs text-slate-400 block font-semibold">Vyberte audio súbor (MP3, WAV, M4A...)</label>
-                    <div class="flex items-center gap-2">
-                        <label class="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 font-mono cursor-pointer transition">
-                            <svg class="w-4 h-4 text-cinema-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
-                            <span id="audioFileLabel">Zvoliť súbor</span>
-                            <input type="file" id="audioFileInput" accept="audio/*" onchange="loadUserAudioFile(event)" class="hidden">
-                        </label>
-                    </div>
-                    <div id="audioStatusMsg" class="text-[10px] text-slate-500 font-mono"></div>
-                </div>
             </div>
 
-            <!-- Hlavné tlačidlo na generovanie -->
-            <button onclick="startDeepThinkingProcess()" class="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-cinema-gold to-yellow-600 hover:from-cinema-goldHover hover:to-yellow-700 text-slate-950 font-bold text-sm tracking-widest uppercase transition-all duration-300 transform active:scale-95 shadow-lg shadow-cinema-gold/10 flex items-center justify-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path></svg>
-                <span id="generateBtnText">Generovať Video</span>
-            </button>
-
-        </section>
-
-        <!-- Pravá strana: Živý náhľad a Hlboké uvažovanie (7 stĺpcov) -->
-        <section class="lg:col-span-7 bg-slate-950 flex flex-col p-6 space-y-6 overflow-y-auto">
-            
-            <!-- Box pre náhľad titulkovej scény -->
-            <div class="relative flex-1 bg-black rounded-2xl border border-slate-900 overflow-hidden flex flex-col items-center justify-center group min-h-[400px]">
+            <!-- PRAVÝ PANEL: Monitor, Zvukový Spektrometer, Deep Thinking -->
+            <div class="lg:col-span-7 space-y-6 flex flex-col justify-between">
                 
-                <div class="absolute top-4 left-4 z-10 flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
-                    <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Živý Náhľad (Zmenšený)</span>
+                <!-- Monitor generovania a spracovania -->
+                <div class="glass-panel rounded-3xl p-6 flex-1 flex flex-col justify-between min-h-[550px] relative overflow-hidden">
+                    <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                            </span>
+                            <h3 class="font-cyber font-bold text-slate-200 text-xs tracking-widest uppercase">NÁHĽADOVÝ MONITOR</h3>
+                        </div>
+                        <span id="renderingStatus" class="text-[9px] font-cyber text-cyan-400 bg-cyan-950/30 px-3 py-1 rounded-xl border border-cyan-500/20 uppercase tracking-widest">Pripravený</span>
+                    </div>
+
+                    <!-- Náhľadový Canvas -->
+                    <div class="relative aspect-video bg-slate-950 rounded-2xl border border-white/5 overflow-hidden flex items-center justify-center shadow-inner">
+                        <canvas id="movieCanvas" class="w-full h-full object-contain"></canvas>
+                        
+                        <!-- Vodoznak pre Free verziu -->
+                        <div id="watermark" class="absolute bottom-4 right-4 bg-slate-900/80 backdrop-blur-md text-white/40 text-[9px] font-cyber tracking-widest px-3 py-1.5 rounded-xl border border-white/10 select-none">
+                            CineCredits FREE v1.0
+                        </div>
+                        
+                        <!-- Stavový prekryv počas spracovania -->
+                        <div id="processingOverlay" class="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 hidden">
+                            <div class="relative w-20 h-20 mb-6">
+                                <div class="absolute inset-0 rounded-full border-4 border-cyan-500/10"></div>
+                                <div class="absolute inset-0 rounded-full border-4 border-t-cyan-400 animate-spin"></div>
+                                <div class="absolute inset-2 rounded-full border-2 border-b-purple-400 animate-spin" style="animation-duration: 1.5s;"></div>
+                            </div>
+                            <h4 class="text-white font-cyber font-bold text-xs tracking-widest mb-1 uppercase text-center">KVANTOVÁ REKONŠTRUKCIA SNÍMKOV</h4>
+                            <p class="text-[10px] text-slate-400 mb-5 font-mono" id="processingPercent">Inicializácia rekordéra (0%)</p>
+                            
+                            <!-- Progress Bar -->
+                            <div class="w-64 bg-slate-900/80 border border-white/5 h-3 rounded-full overflow-hidden p-0.5">
+                                <div id="progressBar" class="bg-gradient-to-r from-cyan-400 to-indigo-500 h-full rounded-full w-0 transition-all duration-100 shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ZVUKOVÝ HOLOGRAFICKÝ SPEKTROMETER -->
+                    <div class="mt-4 bg-slate-950/40 border border-white/5 rounded-2xl p-3 flex flex-col">
+                        <span class="text-[9px] font-cyber tracking-widest text-slate-500 mb-2 uppercase flex items-center gap-1">
+                            <i class="fa-solid fa-waveform"></i> Spektrálny Analyzátor zvuku
+                        </span>
+                        <div class="h-10 flex items-end justify-between gap-[2px] px-2 bg-black/45 rounded-xl overflow-hidden pt-2" id="equalizerBars">
+                            <!-- Dynamické stĺpce vizualizéra vytvorené cez JS -->
+                        </div>
+                    </div>
+
+                    <!-- SEKREČNÉ REALTIME HLBOKÉ UVAŽOVANIE -->
+                    <div class="mt-4 bg-slate-950/60 border border-white/5 rounded-2xl p-4 flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-500/10 to-transparent pointer-events-none rounded-full blur-xl"></div>
+                        <div class="flex items-center justify-between border-b border-white/5 pb-2.5 mb-2.5">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-brain text-purple-400 animate-bounce"></i>
+                                <span class="text-[10px] font-cyber font-bold tracking-widest text-slate-300 uppercase">Real-Time Deep Thinking (Uvažovanie AI)</span>
+                            </div>
+                            <span id="thinkingStatus" class="text-[9px] font-cyber bg-slate-900 text-slate-500 px-2.5 py-1 rounded-md border border-white/5 uppercase tracking-wider">Neaktívne</span>
+                        </div>
+                        <!-- Thinking Log -->
+                        <div id="thinkingLog" class="h-24 overflow-y-auto text-[11px] font-mono text-slate-400 space-y-2 p-1 leading-relaxed">
+                            <span class="text-slate-600">&gt; Aktivujte prémiový model pre spustenie hlbokého uvažovania v reálnom čase...</span>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="absolute top-4 right-4 z-10 flex items-center gap-2">
-                    <span class="text-xs font-mono text-slate-500 bg-slate-900/80 px-2 py-1 rounded border border-slate-800" id="resTextIndicator">1920x1080 (Skutočné rozlíšenie videa)</span>
-                </div>
-
-                <!-- Canvas element na renderovanie -->
-                <canvas id="creditsCanvas" class="w-full h-auto aspect-video max-w-4xl bg-black shadow-2xl rounded-lg"></canvas>
-
-                <!-- Prehrávacie ovládanie náhľadu -->
-                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-3 bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-full backdrop-blur transition-opacity opacity-80 hover:opacity-100">
-                    <button onclick="togglePreviewPlay()" id="playBtn" class="text-cinema-gold hover:text-white transition">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                    </button>
-                    <button onclick="restartPreview()" class="text-slate-400 hover:text-white transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 12H18M9 11V5h6"></path></svg>
-                    </button>
-                    <div class="w-px h-4 bg-slate-800"></div>
-                    <span id="previewTimer" class="text-xs font-mono text-slate-400">0.0s / 15.0s</span>
-                </div>
             </div>
 
-            <!-- Informácie o exporte -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-900 flex items-center gap-3">
-                    <div class="p-3 bg-amber-500/10 text-cinema-gold rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-slate-400">FPS a Plynulosť</span>
-                        <span class="font-bold text-sm text-white">30 Snímok/s (Konštantné)</span>
-                    </div>
-                </div>
-                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-900 flex items-center gap-3">
-                    <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-slate-400">Presné Rozlíšenie</span>
-                        <span class="font-bold text-sm text-white" id="infoResolutionCurrent">Full HD (1920x1080)</span>
-                    </div>
-                </div>
-                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-900 flex items-center gap-3">
-                    <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-slate-400">Export a Formát</span>
-                        <span class="font-bold text-sm text-white" id="formatIndicator">Automatický MP4/WebM</span>
-                    </div>
-                </div>
+        </div>
+
+        <!-- SEKREČNÁ SEKCIA: 4 BALÍKY ČLENSTIEV -->
+        <section id="pricing" class="mt-24 border-t border-white/5 pt-16">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-cyan-400 text-xs font-bold font-cyber uppercase tracking-[0.25em] bg-cyan-500/10 px-4 py-1.5 rounded-full border border-cyan-500/20">KVANTOVÉ PRÍSTUPY</span>
+                <h2 class="font-cinema text-3xl font-bold mt-5 text-white tracking-widest">AKTIVOVAŤ KANÁL 1080P/4K & DEEP THINKING</h2>
+                <p class="text-slate-400 text-sm mt-3 leading-relaxed">Vyberte si jeden z kvantových prístupových kanálov a odomknite pokročilú filmovú AI, ktorá reštrukturalizuje prechody a optimalizuje plynulosť renderovania v reálnom čase.</p>
             </div>
 
+            <!-- Karty balíkov -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Balík 1: FREE -->
+                <div class="glass-panel rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-500/5 to-transparent pointer-events-none rounded-full blur-xl"></div>
+                    <div>
+                        <span class="absolute top-4 right-4 text-slate-600 text-2xl"><i class="fa-solid fa-seedling"></i></span>
+                        <h3 class="text-slate-300 font-cyber font-bold tracking-wider text-xs uppercase">Zadarmo v1.1</h3>
+                        <div class="flex items-baseline gap-1 my-4">
+                            <span class="text-3xl font-black font-cyber text-white">0 €</span>
+                            <span class="text-xs text-slate-500">/ navždy</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-6 leading-relaxed">Základné prostredie na testovanie mien, základných šablón a jednoduchého scrollovania.</p>
+                        <ul class="space-y-3.5 text-[11px] text-slate-300 mb-8 border-t border-white/5 pt-5">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Free Model v1 & v1.1</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid pointer-events-none fa-circle-check text-cyan-400 text-[10px]"></i> Podpora MP3 hudby</li>
+                            <li class="flex items-center gap-2 text-slate-650"><i class="fa-solid fa-circle-xmark text-[10px]"></i> Max rozlíšenie 720p30</li>
+                            <li class="flex items-center gap-2 text-slate-650"><i class="fa-solid fa-circle-xmark text-[10px]"></i> Bez hlbokého uvažovania</li>
+                        </ul>
+                    </div>
+                    <button onclick="activateFreePlan()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition-all tracking-wider uppercase border border-white/10 font-cyber">
+                        Základný Prístup
+                    </button>
+                </div>
+
+                <!-- Balík 2: ŠTART (Bronze) -->
+                <div class="glass-panel rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-500/5 to-transparent pointer-events-none rounded-full blur-xl"></div>
+                    <div>
+                        <span class="absolute top-4 right-4 text-amber-700 text-2xl"><i class="fa-solid fa-shield"></i></span>
+                        <h3 class="text-white font-cyber font-bold tracking-wider text-xs uppercase">Bronzový Štart</h3>
+                        <div class="flex items-baseline gap-1 my-4">
+                            <span class="text-3xl font-black font-cyber text-white">9 €</span>
+                            <span class="text-xs text-slate-500">/ 30 dní</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-6 leading-relaxed">Vhodný pre nezávislých autorov na spracovanie Full HD projektov so stabilnou rýchlosťou.</p>
+                        <ul class="space-y-3.5 text-[11px] text-slate-300 mb-8 border-t border-white/5 pt-5">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Premium AI Modely (1080p)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Prístup k 2027 Beta testu</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> IndexedDB synchronizácia</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Uvažovanie Deep Thinking</li>
+                        </ul>
+                    </div>
+                    <button onclick="openPaymentGateway('Bronze', 9, 30)" class="w-full bg-gradient-to-r from-blue-900 to-indigo-800 hover:from-blue-800 hover:to-indigo-700 text-white font-bold py-3 rounded-xl text-xs transition-all tracking-wider uppercase border border-indigo-500/30 font-cyber">
+                        Aktivovať Štart
+                    </button>
+                </div>
+
+                <!-- Balík 3: PRO (Silver) -->
+                <div class="glass-panel rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden border-2 border-cyan-500/50 shadow-[0_0_30px_rgba(6,182,212,0.15)]">
+                    <div class="absolute -top-3 -right-12 bg-cyan-500 text-slate-950 text-[9px] font-black font-cyber uppercase tracking-widest py-1.5 px-12 rotate-45">ODPORÚČANÉ</div>
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-cyan-500/10 to-transparent pointer-events-none rounded-full blur-xl"></div>
+                    <div>
+                        <span class="absolute top-4 right-4 text-cyan-400 text-2xl"><i class="fa-solid fa-crown"></i></span>
+                        <h3 class="text-white font-cyber font-bold tracking-wider text-xs uppercase">Strieborné PRO</h3>
+                        <div class="flex items-baseline gap-1 my-4">
+                            <span class="text-3xl font-black font-cyber text-white">19 €</span>
+                            <span class="text-xs text-slate-500">/ 90 dní</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-6 leading-relaxed">Optimálne pre stredné filmové tímy. Dlhodobá platnosť, super-rýchle 4K uvažovanie.</p>
+                        <ul class="space-y-3.5 text-[11px] text-slate-300 mb-8 border-t border-white/5 pt-5">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Všetky 1080p a 4K modely</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Plný prístup k 2027 jadrám</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Prioritné výpočtové jadrá</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Expresný export do MP4</li>
+                        </ul>
+                    </div>
+                    <button onclick="openPaymentGateway('Silver PRO', 19, 90)" class="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-black py-3.5 rounded-xl text-xs transition-all tracking-wider uppercase shadow-[0_0_15px_rgba(6,182,212,0.3)] font-cyber">
+                        Zvoliť Silver PRO
+                    </button>
+                </div>
+
+                <!-- Balík 4: VIP STUDIO (Gold) -->
+                <div class="glass-panel rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-500/15 to-transparent pointer-events-none rounded-full blur-xl"></div>
+                    <div>
+                        <span class="absolute top-4 right-4 text-amber-500 text-2xl"><i class="fa-solid fa-gem"></i></span>
+                        <h3 class="text-white font-cyber font-bold tracking-wider text-xs uppercase">Zlaté VIP Studio</h3>
+                        <div class="flex items-baseline gap-1 my-4">
+                            <span class="text-3xl font-black font-cyber text-white">49 €</span>
+                            <span class="text-xs text-slate-500">/ 365 dní</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-6 leading-relaxed">Celý rok bezstarostného prístupu s absolútne najpokročilejším modelom a VIP podporou.</p>
+                        <ul class="space-y-3.5 text-[11px] text-slate-300 mb-8 border-t border-white/5 pt-5">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Neobmedzený 4K a 1080p export</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> 1 rok plného prístupu</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> Ultra-hlboké real-time uvažovanie</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i> VIP asistenčný kanál</li>
+                        </ul>
+                    </div>
+                    <button onclick="openPaymentGateway('Gold VIP', 49, 365)" class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-bold py-3 rounded-xl text-xs transition-all tracking-wider uppercase font-cyber">
+                        Aktivovať Gold VIP
+                    </button>
+                </div>
+
+            </div>
         </section>
+
     </main>
 
-    <!-- Overlay: Hĺbkové Uvažovanie a Renderovanie (Deep Thinking Screen) -->
-    <div id="deepThinkingOverlay" class="fixed inset-0 bg-slate-950/98 z-50 flex flex-col items-center justify-center p-6 hidden">
-        <div class="max-w-2xl w-full text-center space-y-8">
+    <!-- SIMULOVANÁ PLATOBNÁ BRÁNA -->
+    <div id="paymentModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-xl z-50 flex items-center justify-center hidden p-4">
+        <div class="glass-panel border-white/10 rounded-3xl max-w-md w-full p-6 relative">
+            <button onclick="closePaymentGateway()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
             
-            <!-- Animované uvažujúce AI jadro -->
-            <div class="relative w-28 h-28 mx-auto">
-                <div class="absolute inset-0 rounded-full border border-cinema-gold/30 thinking-glow animate-ping"></div>
-                <div class="absolute inset-2 rounded-full border-2 border-dotted border-blue-500/60 animate-spin" style="animation-duration: 8s;"></div>
-                <div class="absolute inset-4 rounded-full border border-cinema-gold/50 animate-spin" style="animation-duration: 4s; animation-direction: reverse;"></div>
-                <div class="absolute inset-6 rounded-full bg-gradient-to-tr from-slate-950 to-slate-900 flex items-center justify-center shadow-inner">
-                    <svg class="w-8 h-8 text-cinema-gold animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+            <div class="text-center mb-6">
+                <div class="inline-flex p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 mb-3">
+                    <i class="fa-solid fa-circle-nodes text-2xl"></i>
                 </div>
+                <h3 class="text-white font-cyber font-bold text-sm tracking-wider uppercase">KVANTOVÁ AKTIVÁCIA</h3>
+                <p class="text-xs text-slate-400 mt-1">Spracovanie balíka: <strong id="paymentPlanName" class="text-cyan-400">Názov balíka</strong></p>
             </div>
 
-            <div class="space-y-2">
-                <h2 class="text-2xl font-black tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-cinema-gold via-white to-blue-400" id="thinkingTitle">Prebieha hĺbkové uvažovanie AI</h2>
-                <p class="text-xs text-slate-400 font-mono" id="thinkingSubtitle">Analyzujeme text, pripravujeme vektory a zapisujeme video dáta...</p>
-            </div>
-
-            <!-- Konzola s uvažujúcimi krokmi -->
-            <div class="bg-slate-900/70 rounded-xl border border-slate-800 p-5 text-left font-mono text-xs text-slate-300 space-y-3 h-52 overflow-y-auto" id="thinkingConsole">
-                <p class="text-blue-400">&gt; Inicializácia hlbokého uvažovania...</p>
-            </div>
-
-            <!-- Celkový progres bar -->
-            <div class="space-y-1.5 text-left">
-                <div class="flex justify-between text-[11px] font-mono text-slate-400">
-                    <span id="progressStepName">Rendering, Kompresia & Finalizácia zápisu</span>
-                    <span id="renderPercent">0%</span>
-                </div>
-                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
-                    <div id="renderProgressBar" class="h-full bg-gradient-to-r from-cinema-gold to-blue-500 w-0 transition-all duration-150"></div>
-                </div>
-            </div>
-
-            <p class="text-[10px] text-slate-500 italic">Spracovanie prebieha lokálne v tvojom prehliadači v maximálnej kvalite. Hotové video sa automaticky stiahne.</p>
-        </div>
-    </div>
-
-    <!-- Modálne okno s členstvom a balíkmi (Pricing Modal) -->
-    <div id="pricingModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 overflow-y-auto hidden">
-        <div class="bg-slate-900 border border-slate-800 max-w-5xl w-full p-6 md:p-8 rounded-3xl space-y-6 my-8 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+            <div class="space-y-4">
                 <div>
-                    <h2 class="text-2xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cinema-gold to-white">Výber Prémiového Členstva</h2>
-                    <p class="text-xs text-slate-400">Získaj prístup k Cinema Pro v2, Ultra Thinking v3 a renderovaniu v plnom 1080p30 rozlíšení</p>
+                    <label class="block text-[11px] text-slate-400 mb-1 font-semibold tracking-wider uppercase font-cyber">Meno držiteľa karty</label>
+                    <input type="text" value="Ján Novák" class="w-full bg-slate-950 border border-white/5 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 font-semibold font-cyber">
                 </div>
-                <button onclick="closePricingModal()" class="text-slate-400 hover:text-white p-2">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <div>
+                    <label class="block text-[11px] text-slate-400 mb-1 font-semibold tracking-wider uppercase font-cyber">Číslo karty</label>
+                    <div class="relative">
+                        <input type="text" value="4111 •••• •••• 8899" class="w-full bg-slate-950 border border-white/5 rounded-xl p-3 pl-10 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 font-mono">
+                        <i class="fa-brands fa-cc-visa absolute left-3 top-3.5 text-slate-500"></i>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1 font-semibold tracking-wider uppercase font-cyber">Exspirácia</label>
+                        <input type="text" value="12 / 29" class="w-full bg-slate-950 border border-white/5 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 text-center font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1 font-semibold tracking-wider uppercase font-cyber">CVC / CVV</label>
+                        <input type="password" value="999" class="w-full bg-slate-950 border border-white/5 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 text-center font-mono">
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 border border-white/5 p-4 rounded-xl flex justify-between items-center">
+                    <span class="text-xs text-slate-400 font-semibold tracking-wider uppercase font-cyber">Celková transakcia:</span>
+                    <span id="paymentAmountText" class="text-lg font-cyber font-bold text-cyan-400">0,00 €</span>
+                </div>
+
+                <button onclick="processPayment()" class="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-black py-4 rounded-2xl text-xs transition-all flex items-center justify-center gap-2 tracking-widest font-cyber shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                    <i class="fa-solid fa-lock-open text-xs"></i> ZAHÁJIŤ TRANSAKCIU
                 </button>
             </div>
-
-            <!-- 4 Balíky (Cenový list) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                
-                <!-- Balík 1: Bronzový Nadšenec -->
-                <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-4 hover:border-amber-700/50 transition">
-                    <div class="space-y-2">
-                        <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-amber-900/20 text-amber-400 border border-amber-900/30">Bronzový Nadšenec</span>
-                        <div class="text-2xl font-black text-white">4,99 € <span class="text-xs font-normal text-slate-500">/ 3 dni</span></div>
-                        <p class="text-xs text-slate-400">Ideálne na rýchle vyskúšanie projektov.</p>
-                        <ul class="text-[11px] text-slate-300 space-y-1.5 pt-2">
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> 1080p30 Kvalita</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Cinema Pro v2</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Ultra Thinking v3</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Plynulý zvuk a fade-out</li>
-                        </ul>
-                    </div>
-                    <button onclick="openPaymentGateway('Bronzový Nadšenec', 4.99, 3)" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold transition">Aktivovať Bronz</button>
-                </div>
-
-                <!-- Balík 2: Strieborný Tvorca -->
-                <div class="bg-slate-950 p-5 rounded-2xl border-2 border-cinema-gold flex flex-col justify-between space-y-4 relative">
-                    <div class="absolute -top-3 right-4 bg-cinema-gold text-slate-950 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Najpopulárnejší</div>
-                    <div class="space-y-2">
-                        <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-yellow-900/20 text-cinema-gold border border-yellow-900/30">Strieborný Tvorca</span>
-                        <div class="text-2xl font-black text-white">9,99 € <span class="text-xs font-normal text-slate-500">/ 14 dní</span></div>
-                        <p class="text-xs text-slate-400">Pre aktívnych filmárov a tvorcov obsahu.</p>
-                        <ul class="text-[11px] text-slate-300 space-y-1.5 pt-2">
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Všetko z Bronzu</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Dlhá 14-dňová platnosť</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Prioritné generovanie</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Podpora pre nahranie MP3</li>
-                        </ul>
-                    </div>
-                    <button onclick="openPaymentGateway('Strieborný Tvorca', 9.99, 14)" class="w-full py-2 rounded-xl bg-cinema-gold hover:bg-cinema-goldHover text-slate-950 text-xs font-bold transition">Aktivovať Striebro</button>
-                </div>
-
-                <!-- Balík 3: Zlatý Producent -->
-                <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-4 hover:border-yellow-600/50 transition">
-                    <div class="space-y-2">
-                        <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-amber-400/10 text-cinema-gold border border-amber-400/20">Zlatý Producent</span>
-                        <div class="text-2xl font-black text-white">19,99 € <span class="text-xs font-normal text-slate-500">/ 30 dní</span></div>
-                        <p class="text-xs text-slate-400">Kompletná filmová sezóna pre náročných.</p>
-                        <ul class="text-[11px] text-slate-300 space-y-1.5 pt-2">
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Všetko zo Striebra</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Celomesačná platnosť</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Premium 1080p rendering</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Pokročilé real-time uvažovanie</li>
-                        </ul>
-                    </div>
-                    <button onclick="openPaymentGateway('Zlatý Producent', 19.99, 30)" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold transition">Aktivovať Zlato</button>
-                </div>
-
-                <!-- Balík 4: Platinový Režisér -->
-                <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-4 hover:border-blue-500/50 transition">
-                    <div class="space-y-2">
-                        <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-blue-900/20 text-blue-400 border border-blue-900/30">Platinový Režisér</span>
-                        <div class="text-2xl font-black text-white">49,99 € <span class="text-xs font-normal text-slate-500">/ 1 rok</span></div>
-                        <p class="text-xs text-slate-400">Profesionálne celoročné členstvo pre štúdiá.</p>
-                        <ul class="text-[11px] text-slate-300 space-y-1.5 pt-2">
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Celoročná plná licencia</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> Neobmedzené 1080p renderingy</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> VIP podpora & prednostné uvažovanie</li>
-                            <li class="flex items-center gap-1.5"><span class="text-cinema-gold">✓</span> 3D Star Wars vesmírne módy</li>
-                        </ul>
-                    </div>
-                    <button onclick="openPaymentGateway('Platinový Režisér', 49.99, 365)" class="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold transition">Aktivovať Platinu</button>
-                </div>
-
-            </div>
-            <p class="text-[10px] text-slate-500 text-center italic mt-2">Jedná sa o simulovanu a plne bezpečnú testovaciu platobnú bránu. Žiadne skutočné peniaze sa neúčtujú.</p>
         </div>
     </div>
 
-    <!-- Modálne okno simulovanej platobnej brány (Payment Gateway Modal) -->
-    <div id="paymentGatewayModal" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 max-w-md w-full p-6 rounded-2xl space-y-6">
-            <div class="text-center space-y-1">
-                <div class="text-xs font-bold text-cinema-gold uppercase tracking-wider font-mono">CineCredits Secure Pay</div>
-                <h3 class="text-lg font-bold text-white">Bezpečná Platobná Brána</h3>
-                <p class="text-xs text-slate-400">Platíte za balík: <span id="paymentTargetPlan" class="text-white font-bold">---</span></p>
-            </div>
-
-            <!-- Platobný formulár -->
-            <div class="space-y-4">
-                <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 flex justify-between items-center text-sm font-mono">
-                    <span class="text-slate-400">Suma na úhradu:</span>
-                    <span class="text-white font-bold" id="paymentAmountText">0.00 €</span>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-[10px] text-slate-400 uppercase tracking-wider block">Číslo Testovacej Karty</label>
-                    <input type="text" value="4111 2222 3333 4444" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 font-mono focus:outline-none">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="space-y-2">
-                        <label class="text-[10px] text-slate-400 uppercase tracking-wider block">Platnosť</label>
-                        <input type="text" value="12 / 28" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 font-mono focus:outline-none">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] text-slate-400 uppercase tracking-wider block">CVC kód</label>
-                        <input type="text" value="123" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-300 font-mono focus:outline-none">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tlačidlá platby -->
-            <div class="flex gap-3">
-                <button onclick="closePaymentGateway()" class="flex-1 py-2.5 rounded-lg bg-slate-950 hover:bg-slate-900 border border-slate-800 text-xs font-bold uppercase tracking-wider transition">Zrušiť</button>
-                <button onclick="processSimulatedPayment()" class="flex-1 py-2.5 rounded-lg bg-gradient-to-r from-cinema-gold to-yellow-600 hover:from-cinema-goldHover hover:to-yellow-700 text-slate-950 font-bold text-xs uppercase tracking-wider transition">Zaplatiť (Simulácia)</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modálne okno s oznámením -->
-    <div id="customModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 max-w-md w-full p-6 rounded-2xl text-center space-y-4">
-            <div id="modalIcon" class="w-12 h-12 rounded-full bg-cinema-gold/10 text-cinema-gold flex items-center justify-center mx-auto text-xl font-bold">✓</div>
-            <h3 id="modalTitle" class="text-lg font-bold text-white">Oznámenie</h3>
-            <p id="modalBody" class="text-sm text-slate-400">Správa pre užívateľa.</p>
-            <button onclick="closeCustomModal()" class="px-5 py-2.5 rounded-lg bg-cinema-gold hover:bg-cinema-goldHover text-slate-950 font-bold text-sm tracking-wider uppercase transition">Rozumiem</button>
-        </div>
-    </div>
-
-    <!-- Scripty pre logiku, animácie, platby a export videa -->
+    <!-- JAVASCRIPT LOGIKA -->
     <script>
-        // Globálne referencie
-        const canvas = document.getElementById('creditsCanvas');
-        const ctx = canvas.getContext('2d');
-        const textInput = document.getElementById('creditsText');
-        const animStyleSelect = document.getElementById('animationStyle');
-        const fontFamilySelect = document.getElementById('fontFamily');
-        const colorSchemeSelect = document.getElementById('colorScheme');
-        const durationInput = document.getElementById('videoDuration');
-        const playBtn = document.getElementById('playBtn');
-        const previewTimer = document.getElementById('previewTimer');
-        const customAudioBlock = document.getElementById('customAudioBlock');
-        const audioFileLabel = document.getElementById('audioFileLabel');
-        const audioStatusMsg = document.getElementById('audioStatusMsg');
-        
-        // Globálne konštanty pre rozlíšenie
-        let VIDEO_WIDTH = 1280; // Default pre bezplatnú verziu (720p)
-        let VIDEO_HEIGHT = 720;
-        canvas.width = VIDEO_WIDTH;
-        canvas.height = VIDEO_HEIGHT;
-
-        // Globálne stavy animácie
-        let isPlaying = true;
-        let animationFrameId = null;
-        let startTime = null;
-        let elapsedSeconds = 0;
-        let creditItems = [];
-        let totalAnimationHeight = 0;
-
-        // Globálny objekt pre uchovanie načítanej hudby
-        let userAudioBuffer = null;
-        let userAudioFileName = "";
-
-        // SYSTÉM ČLENSTVA & AI MODELOV
-        let userMembership = {
-            plan: 'free', // 'free' alebo 'Bronzový Nadšenec', 'Strieborný Tvorca', 'Zlatý Producent', 'Platinový Režisér'
-            expiresAt: null, // Date object platnosti
-            isPremium: false
+        // GLOBÁLNY STAV
+        let userSubscription = {
+            active: false,
+            plan: 'Free',
+            expiryDate: null,
+            createdDate: null
         };
 
-        let selectedAIModel = 'free-v1'; // 'free-v1', 'free-v1.1', 'premium-v2', 'premium-v3'
+        let activeTheme = 'classic';
+        let pendingPlan = null;
+        let isGenerating = false;
+        
+        // Zvukový stav
+        let uploadedAudioBuffer = null;
+        let audioSourceNode = null;
+        let isAudioPlaying = false;
+        let audioAnalyser = null;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        // Dočasné platobné informácie
-        let pendingPlanName = "";
-        let pendingPlanPrice = 0.0;
-        let pendingPlanDays = 0;
+        // INDEXEDDB CONFIG
+        const DB_NAME = 'CineCreditsDatabase';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'subscription';
 
-        // INDEXEDDB CONFIG & INITIALIZATION
-        const dbName = "CineCreditsDB";
-        const dbVersion = 1;
-        let db;
+        // SYNTETIZÁTOR PRE SCI-FI ZVUKY
+        function playSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
 
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.1);
+                } else if (type === 'success') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(750, audioCtx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(1100, audioCtx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                } else if (type === 'render_start') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(550, audioCtx.currentTime + 0.6);
+                    gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.6);
+                } else if (type === 'render_end') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.5);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.5);
+                }
+            } catch (e) {
+                console.log("Audio not initiated or interaction needed.");
+            }
+        }
+
+        // NAČÍTANIE INDEXEDDB
         function initIndexedDB() {
-            return new Promise((resolve) => {
-                const request = indexedDB.open(dbName, dbVersion);
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
                 request.onupgradeneeded = function(e) {
-                    const localDb = e.target.result;
-                    if (!localDb.objectStoreNames.contains("membership")) {
-                        localDb.createObjectStore("membership", { keyPath: "id" });
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
                     }
                 };
                 request.onsuccess = function(e) {
-                    db = e.target.result;
-                    resolve(db);
+                    resolve(e.target.result);
                 };
-                request.onerror = function() {
-                    resolve(null);
+                request.onerror = function(e) {
+                    reject(e.target.error);
                 };
             });
         }
 
-        function saveMembershipToDB(membership) {
-            if (!db) return;
+        async function saveSubscriptionToDB(sub) {
+            const db = await initIndexedDB();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                const data = { id: 'user_sub', ...sub };
+                const request = store.put(data);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function loadSubscriptionFromDB() {
+            const db = await initIndexedDB();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.get('user_sub');
+                request.onsuccess = () => resolve(request.result || null);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // KONTROLA ČLENSTVA PRI NAČÍTANÍ
+        window.addEventListener('DOMContentLoaded', async () => {
+            loadTemplate('classic');
+            buildEqualizerBars();
+            
             try {
-                const transaction = db.transaction(["membership"], "readwrite");
-                const store = transaction.objectStore("membership");
-                store.put({
-                    id: "current_user",
-                    plan: membership.plan,
-                    expiresAt: membership.expiresAt ? membership.expiresAt.toISOString() : null,
-                    isPremium: membership.isPremium
-                });
-            } catch (err) {
-                console.error("Chyba zápisu do IndexedDB:", err);
-            }
-        }
-
-        function loadMembershipFromDB() {
-            return new Promise((resolve) => {
-                if (!db) {
-                    resolve(null);
-                    return;
-                }
-                try {
-                    const transaction = db.transaction(["membership"], "readonly");
-                    const store = transaction.objectStore("membership");
-                    const request = store.get("current_user");
-                    request.onsuccess = function(e) {
-                        if (e.target.result) {
-                            const data = e.target.result;
-                            resolve({
-                                plan: data.plan,
-                                expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
-                                isPremium: data.isPremium
-                            });
-                        } else {
-                            resolve(null);
-                        }
-                    };
-                    request.onerror = function() {
-                        resolve(null);
-                    };
-                } catch (err) {
-                    resolve(null);
-                }
-            });
-        }
-
-        // Šablóny textov pre titulky
-        const templates = {
-            blockbuster: `# GALAKTICKÝ REBEL
-# VESMÍRNA ODYSEA 2026
-
-V HLAVNÝCH ROLÁCH:
-Alexander Novák : Generál Vance
-Michaela Krajčiová : Poručík Vesper
-Viktor Hrubý : Cyborg D-4
-Sophia Kováčová : Prvá Dôstojníčka
-
-REŽISÉR:
-Patrik Valo
-
-SCENÁR:
-Ema Ševčíková
-Maroš Čierny
-
-PRODUCENTI:
-CineCredits Studios
-Slovak Film Fund
-
-ŠPECIÁLNE EFEKTY:
-CGI Slovakia Labs
-
-HUDEBNÝ PODMAZ:
-Lucas Synthesizers
-
-Natočené v spolupráci s galaktickým zväzom.
-Všetky práva vyhradené © 2026.`,
-
-            drama: `# TICHÝ ŠEPOT JESENE
-# Príbeh o rodine a čase
-
-OBSADENIE:
-Emília Vášáryová : Babka Mária
-Milan Ondrík : Syn Peter
-Táňa Pauhofová : Dcéra Zuzana
-Juraj Kemka : Sused Jozef
-
-REŽISÉR:
-Samuel Hrašško
-
-KAMERA:
-Kristína Bystrianska
-
-KOSTÝMY:
-Zuzana Muránska
-
-STRIH A ZVUK:
-Martin Tichý
-
-Ďakujeme rodine Kováčovej za zapožičanie domu pre natáčanie.
-Slovenský filmový ústav
-2026`,
-
-            star: `# EPIZÓDA IX
-# NÁVRAT KÓDU
-
-Bolo nebolo, vo vzdialenej galaxii programátorov nastal mier.
-Všetky chyby v kóde boli odstránené,
-systémy bežali optimálne.
-
-Hlavný vývojár : Peter Webový
-Senior architekt : Andrej Cloudový
-UI expert : Nina Responzívna
-UX manažér : Tomáš Použiteľný
-
-Testeri :
-Róbert Klikavý
-Zdenka Bezchybná
-
-Tento softvér bol vytvorený pod vplyvom kofeínu a nedostatku spánku.
-Nech vás sila sprevádza.`
-        };
-
-        // Načítanie na štart
-        window.onload = async function() {
-            loadTemplate('blockbuster');
-            animatePreview();
-            
-            // Inicializácia a načítanie členstva z IndexedDB
-            await initIndexedDB();
-            const storedMembership = await loadMembershipFromDB();
-            if (storedMembership) {
-                userMembership = storedMembership;
-                updateMembershipUI();
-                updateResolutionAndCanvas();
-            }
-            
-            checkMembershipExpiration();
-            setInterval(checkMembershipExpiration, 1000); // Kontrola vypršania každú sekundu v reálnom čase
-        };
-
-        // KONTROLA EXPIRÁCIE ČLENSTVA
-        function checkMembershipExpiration() {
-            if (userMembership.plan !== 'free' && userMembership.expiresAt) {
-                const now = new Date();
-                const timeLeft = userMembership.expiresAt.getTime() - now.getTime();
-
-                if (timeLeft <= 0) {
-                    // Členstvo vypršalo!
-                    userMembership.plan = 'free';
-                    userMembership.isPremium = false;
-                    userMembership.expiresAt = null;
-
-                    // Uložiť nový vypršaný stav do IndexedDB
-                    saveMembershipToDB(userMembership);
-
-                    // Ak bol vybraný prémiový model, vrátime na free model
-                    if (selectedAIModel === 'premium-v2' || selectedAIModel === 'premium-v3') {
-                        selectedAIModel = 'free-v1';
-                        document.querySelector('input[value="free-v1"]').checked = true;
-                    }
-
-                    updateMembershipUI();
-                    updateResolutionAndCanvas();
-
-                    // Výstražné upozornenie pre užívateľa
-                    openCustomModal(
-                        "⚠️ Členstvo vypršalo", 
-                        "Vaše prémiové členstvo dnes vypršalo. Prístup k prémiovým modelom (Cinema Pro v2, Ultra Thinking v3) a exportu v kvalite 1080p30 bol pozastavený. Pre opätovný prístup prosím obnovte svoje členstvo zaplatením niektorého z balíkov."
-                    );
-                    playSynthError();
+                const storedSub = await loadSubscriptionFromDB();
+                if (storedSub) {
+                    userSubscription = storedSub;
                 } else {
-                    // Prepočítať ostávajúci čas
-                    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    userSubscription = {
+                        active: false,
+                        plan: 'Free',
+                        expiryDate: null,
+                        createdDate: new Date().toISOString()
+                    };
+                    await saveSubscriptionToDB(userSubscription);
+                }
+                checkSubscriptionStatus();
+                drawPreviewFrame();
+            } catch (err) {
+                console.error("IndexedDB error:", err);
+            }
+        });
 
-                    let countStr = "";
-                    if (days > 0) {
-                        countStr = `Ostáva: ${days}d ${hours}h`;
-                    } else {
-                        countStr = `Expiruje o: ${hours}h ${minutes}m ${seconds}s`;
-                    }
-                    document.getElementById('expirationCountdown').innerText = countStr;
+        // REÁLNA KONTROLA PRE PLATNOSŤ ČLENSTVA
+        function checkSubscriptionStatus() {
+            const now = new Date();
+            const statusBadge = document.getElementById('statusBadge');
+            const expiryAlert = document.getElementById('expiryAlert');
+            const expiryAlertText = document.getElementById('expiryAlertText');
+
+            const modelSelector = document.getElementById('modelSelector');
+            const premiumOptions = modelSelector.querySelectorAll('option[disabled]');
+
+            if (userSubscription.active && userSubscription.expiryDate) {
+                const expDate = new Date(userSubscription.expiryDate);
+                
+                if (now > expDate) {
+                    userSubscription.active = false;
+                    userSubscription.plan = 'Free';
+                    saveSubscriptionToDB(userSubscription);
+                    
+                    statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span><span class="text-red-400 font-cyber">EXSPIROVANÉ</span>`;
+                    expiryAlert.classList.remove('hidden');
+                    expiryAlertText.innerText = `Prístup pre kanál "${userSubscription.plan}" vypršal dňa ${expDate.toLocaleDateString()}. Prémiové a 4K modely boli uzamknuté.`;
+                    
+                    premiumOptions.forEach(opt => opt.disabled = true);
+                    modelSelector.value = 'free_v1';
+                } else {
+                    statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span><span class="text-cyan-400 font-cyber font-bold">AKTÍVNE - ${userSubscription.plan.toUpperCase()}</span>`;
+                    statusBadge.title = `Kvantový kanál platný do: ${expDate.toLocaleString()}`;
+                    expiryAlert.classList.add('hidden');
+                    
+                    premiumOptions.forEach(opt => opt.disabled = false);
                 }
             } else {
-                document.getElementById('expirationCountdown').innerText = "Neobmedzené používanie";
+                statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-500"></span><span class="font-cyber text-slate-400">BEZPLATNÝ REŽIM</span>`;
+                expiryAlert.classList.add('hidden');
+                
+                premiumOptions.forEach(opt => opt.disabled = true);
+                modelSelector.value = 'free_v1';
             }
+
+            handleModelChange();
         }
 
-        // Aktualizácia UI vzhľadu podľa stavu členstva
-        function updateMembershipUI() {
-            const statusDot = document.getElementById('statusDot');
-            const statusText = document.getElementById('statusText');
-            const infoPlanName = document.getElementById('infoPlanName');
-            const infoPlanDetails = document.getElementById('infoPlanDetails');
-            const infoResolutionLimit = document.getElementById('infoResolutionLimit');
-            const headerMembershipBadge = document.getElementById('headerMembershipBadge');
-            const testExpPanel = document.getElementById('testExpPanel');
+        // ZMENA VYBRANÉHO MODELU (Aktualizácia rozlíšenia, 4K a hlbokého uvažovania)
+        function handleModelChange() {
+            const model = document.getElementById('modelSelector').value;
+            const resBadge = document.getElementById('resolutionBadge');
+            const watermark = document.getElementById('watermark');
+            const thinkingStatus = document.getElementById('thinkingStatus');
+            const thinkingLog = document.getElementById('thinkingLog');
 
-            if (userMembership.isPremium) {
-                // Premium stav
-                statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
-                statusText.innerText = `Účet: Premium (${userMembership.plan})`;
-                headerMembershipBadge.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-xs";
-                
-                infoPlanName.innerText = `Balík ${userMembership.plan}`;
-                
-                // Formátovanie dátumu expirácie
-                const expDate = userMembership.expiresAt;
-                const dateStr = `${expDate.getDate()}.${expDate.getMonth() + 1}.${expDate.getFullYear()} o ${expDate.getHours()}:${String(expDate.getMinutes()).padStart(2, '0')}:${String(expDate.getSeconds()).padStart(2, '0')}`;
-                infoPlanDetails.innerText = `Vyprší dňa: ${dateStr}`;
-                
-                infoResolutionLimit.innerText = "Plné 1080p30";
-                infoResolutionLimit.className = "text-[10px] uppercase font-mono tracking-widest text-cinema-gold px-2 py-0.5 rounded border border-cinema-gold/30 bg-cinema-gold/5";
-
-                // Odomknutie vizuálnych elementov v menu modelov
-                document.getElementById('modelLabelV2').classList.remove('opacity-50');
-                document.getElementById('modelLabelV3').classList.remove('opacity-50');
-                document.getElementById('badgeV2').innerText = "Odomknuté";
-                document.getElementById('badgeV3').innerText = "Odomknuté";
-
-                testExpPanel.classList.remove('hidden'); // Zobraziť debug panel
+            if (model.includes('2027')) {
+                resBadge.innerText = '4K (3840x2160)';
+                resBadge.className = 'w-full bg-pink-950/40 border border-pink-500/50 rounded-xl p-3 text-center text-xs font-bold text-pink-400 tracking-wider font-cyber animate-pulse';
+                watermark.classList.add('hidden');
+                thinkingStatus.innerText = 'Extrémne 4K Uvažovanie';
+                thinkingStatus.className = 'text-[9px] font-cyber bg-pink-900/40 text-pink-300 px-2.5 py-1 rounded border border-pink-800/40 uppercase tracking-wider neon-pulse';
+                thinkingLog.innerHTML = `<span class="text-pink-400">&gt; Spúšťam kvantovú predbežnú simuláciu 4K prenosu (Modely pre rok 2027 s ultra-hĺbkovým uvažovaním pripravené).</span>`;
+            } else if (model.startsWith('premium_')) {
+                resBadge.innerText = '1080p (1920x1080)';
+                resBadge.className = 'w-full bg-cyan-950/40 border border-cyan-800/80 rounded-xl p-3 text-center text-xs font-bold text-cyan-400 tracking-wider font-cyber';
+                watermark.classList.add('hidden');
+                thinkingStatus.innerText = 'Uvažovanie povolené';
+                thinkingStatus.className = 'text-[9px] font-cyber bg-purple-900/40 text-purple-300 px-2.5 py-1 rounded border border-purple-800/40 uppercase tracking-wider';
+                thinkingLog.innerHTML = `<span class="text-purple-400">&gt; Koprocesor pripravený na hĺbkovú analýzu snímok pred renderovaním.</span>`;
             } else {
-                // Free stav
-                statusDot.className = "w-2 h-2 rounded-full bg-slate-500";
-                statusText.innerText = "Účet: Bezplatný (Free)";
-                headerMembershipBadge.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs";
-
-                infoPlanName.innerText = "Základný účet";
-                infoPlanDetails.innerText = "Platnosť: Navždy bezplatne";
-                
-                infoResolutionLimit.innerText = "720p30 Limit";
-                infoResolutionLimit.className = "text-[10px] uppercase font-mono tracking-widest text-slate-400 px-2 py-0.5 rounded border border-slate-800";
-
-                // Vizuálne uzamknutie elementov v menu modelov
-                document.getElementById('badgeV2').innerText = "Premium";
-                document.getElementById('badgeV3').innerText = "Premium";
-
-                testExpPanel.classList.add('hidden'); // Skryť debug panel
+                resBadge.innerText = '720p (1280x720)';
+                resBadge.className = 'w-full bg-slate-950/60 border border-white/5 rounded-xl p-3 text-center text-xs font-bold text-slate-400 tracking-wider font-cyber';
+                watermark.classList.remove('hidden');
+                thinkingStatus.innerText = 'Neaktívne';
+                thinkingStatus.className = 'text-[9px] font-cyber bg-slate-900 text-slate-500 px-2.5 py-1 rounded border border-white/5 uppercase tracking-wider';
+                thinkingLog.innerHTML = `<span class="text-slate-600">&gt; Vyberte prémiový model pre aktiváciu hlbokého uvažovania v reálnom čase počas renderovania...</span>`;
             }
         }
 
-        // Zmena vybraného AI modelu
-        function selectModel(modelId) {
-            if ((modelId === 'premium-v2' || modelId === 'premium-v3') && !userMembership.isPremium) {
-                document.querySelector(`input[value="${selectedAIModel}"]`).checked = true;
-                
-                openPricingModal();
-                openCustomModal(
-                    "⭐ Vyžaduje sa Členstvo", 
-                    "Modely Cinema Pro v2 a Ultra Thinking v3 vyžadujú aktívne prémiové členstvo s pokročilým hĺbkovým uvažovaním a rozlíšením 1080p30."
-                );
-                return;
-            }
-
-            selectedAIModel = modelId;
-            updateResolutionAndCanvas();
-        }
-
-        // Aktualizácia rozlíšenia na základe vybraného modelu
-        function updateResolutionAndCanvas() {
-            const resIndicator = document.getElementById('resTextIndicator');
-            const infoResolutionCurrent = document.getElementById('infoResolutionCurrent');
-            const generateBtnText = document.getElementById('generateBtnText');
-
-            if (selectedAIModel === 'premium-v2' || selectedAIModel === 'premium-v3') {
-                VIDEO_WIDTH = 1920;
-                VIDEO_HEIGHT = 1080;
-                resIndicator.innerText = "1920x1080 (Skutočné rozlíšenie videa)";
-                infoResolutionCurrent.innerText = "Full HD (1920x1080)";
-                generateBtnText.innerText = "Generovať 1080p30 Video";
-            } else {
-                VIDEO_WIDTH = 1280;
-                VIDEO_HEIGHT = 720;
-                resIndicator.innerText = "1280x720 (Bezplatné rozlíšenie videa)";
-                infoResolutionCurrent.innerText = "HD Ready (1280x720)";
-                generateBtnText.innerText = "Generovať 720p30 Video";
-            }
-
-            canvas.width = VIDEO_WIDTH;
-            canvas.height = VIDEO_HEIGHT;
-            updatePreviewSettings();
-        }
-
-        // Členstvo & Balíky MODAL
-        function openPricingModal() {
-            document.getElementById('pricingModal').classList.remove('hidden');
-        }
-
-        function closePricingModal() {
-            document.getElementById('pricingModal').classList.add('hidden');
-        }
-
-        // OTVORENIE PLATOBNEJ BRÁNY
-        function openPaymentGateway(planName, price, days) {
-            closePricingModal();
-            pendingPlanName = planName;
-            pendingPlanPrice = price;
-            pendingPlanDays = days;
-
-            document.getElementById('paymentTargetPlan').innerText = `${planName} (Platnosť ${days} dní)`;
-            document.getElementById('paymentAmountText').innerText = `${price.toFixed(2)} €`;
-            document.getElementById('paymentGatewayModal').classList.remove('hidden');
-        }
-
-        function closePaymentGateway() {
-            document.getElementById('paymentGatewayModal').classList.add('hidden');
-            pendingPlanName = "";
-            pendingPlanPrice = 0.0;
-            pendingPlanDays = 0;
-        }
-
-        // SPRACOVANIE PLATBY (SIMULÁCIA + UKLADANIE DO INDEXEDDB)
-        function processSimulatedPayment() {
-            const now = new Date();
-            const expirationDate = new Date();
-            expirationDate.setDate(now.getDate() + pendingPlanDays);
-
-            // Nastavenie úspešného členstva
-            userMembership.plan = pendingPlanName;
-            userMembership.expiresAt = expirationDate;
-            userMembership.isPremium = true;
-
-            // Uložiť stav do IndexedDB
-            saveMembershipToDB(userMembership);
-
-            // Automaticky prepnúť na Cinema Pro v2 model pri zakúpení
-            selectedAIModel = 'premium-v2';
-            setTimeout(() => {
-                const radio = document.querySelector('input[value="premium-v2"]');
-                if (radio) radio.checked = true;
-                updateResolutionAndCanvas();
-            }, 100);
-
-            closePaymentGateway();
-            updateMembershipUI();
-            playSynthSuccess();
-
-            openCustomModal(
-                "✓ Platba prebehla úspešne",
-                `Ďakujeme! Balík '${pendingPlanName}' bol úspešne aktivovaný na ${pendingPlanDays} dní a uložený do IndexedDB. Prémiové funkcie a rozlíšenie 1080p30 boli odomknuté.`
-            );
-        }
-
-        // Simulácia okamžitého vypršania predplatného pre účely testovania
-        function simulateExpirationNow() {
-            if (userMembership.isPremium) {
-                userMembership.expiresAt = new Date(Date.now() - 1000);
-                checkMembershipExpiration();
-            }
-        }
-
-        // Zvuková syntéza úspechu pre UI platobnej brány
-        function playSynthSuccess() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 arpeggio
-                notes.forEach((freq, index) => {
-                    setTimeout(() => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.start();
-                        osc.stop(audioCtx.currentTime + 0.3);
-                    }, index * 100);
-                });
-            } catch(e) {}
-        }
-
-        // Zvukový tón chyby
-        function playSynthError() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.5);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.5);
-            } catch(e) {}
-        }
-
-
-        // Kreslenie scény a animácie náhľadu
-        function loadTemplate(name) {
-            textInput.value = templates[name];
-            if (name === 'drama') {
-                animStyleSelect.value = 'fade';
-                fontFamilySelect.value = 'Playfair Display';
-                colorSchemeSelect.value = 'silver';
-                durationInput.value = '18';
-            } else if (name === 'star') {
-                animStyleSelect.value = 'starwars';
-                fontFamilySelect.value = 'Cinzel';
-                colorSchemeSelect.value = 'gold';
-                durationInput.value = '25';
-            } else {
-                animStyleSelect.value = 'scroll';
-                fontFamilySelect.value = 'Inter';
-                colorSchemeSelect.value = 'cyan';
-                durationInput.value = '15';
-            }
-            parseCreditsText();
-            restartPreview();
-        }
-
-        function handleAudioModeChange() {
-            const val = document.getElementById('audioDrone').value;
-            if (val === 'custom') {
-                customAudioBlock.classList.remove('hidden');
-            } else {
-                customAudioBlock.classList.add('hidden');
-            }
-        }
-
-        function loadUserAudioFile(event) {
+        // NAHRATIE VLASTNÉHO AUDIA
+        function handleAudioUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            userAudioFileName = file.name;
-            audioFileLabel.innerText = file.name.length > 20 ? file.name.substring(0, 17) + "..." : file.name;
-            audioStatusMsg.innerText = "⏳ Spracovávam a dekódujem audio stopu...";
-            audioStatusMsg.className = "text-[10px] text-amber-400 font-mono";
-
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const arrayBuffer = e.target.result;
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                
-                audioCtx.decodeAudioData(arrayBuffer, function(decodedBuffer) {
-                    userAudioBuffer = decodedBuffer;
-                    audioStatusMsg.innerText = `✓ Hudba bola načítaná úspešne! (Dĺžka: ${decodedBuffer.duration.toFixed(1)}s)`;
-                    audioStatusMsg.className = "text-[10px] text-emerald-400 font-mono";
-                    playSynthClick();
-                }, function(err) {
-                    audioStatusMsg.innerText = "❌ Nepodarilo sa dekódovať audio súbor. Skúste MP3 alebo WAV.";
-                    audioStatusMsg.className = "text-[10px] text-red-400 font-mono";
-                    userAudioBuffer = null;
-                });
+            reader.onload = async function(e) {
+                try {
+                    const arrayBuffer = e.target.result;
+                    document.getElementById('audioStatus').innerText = "Dekódujem...";
+                    
+                    // Dekódovanie ArrayBufferu do AudioBufferu
+                    uploadedAudioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+                    
+                    document.getElementById('audioStatus').innerText = "Pripravené";
+                    document.getElementById('playAudioBtn').disabled = false;
+                    document.getElementById('removeAudioBtn').disabled = false;
+                    
+                    playSound('success');
+                    alertNotification("Zvukový súbor bol úspešne dekódovaný a prepojený!", "success");
+                } catch (err) {
+                    console.error("Dekódovanie audia zlyhalo:", err);
+                    alertNotification("Nepodarilo sa dekódovať audio súbor. Skúste iné MP3.", "error");
+                    removeUploadedAudio();
+                }
             };
             reader.readAsArrayBuffer(file);
         }
 
-        function parseCreditsText() {
-            const raw = textInput.value;
-            const lines = raw.split('\n');
-            creditItems = [];
+        function toggleUploadedAudio() {
+            if (!uploadedAudioBuffer) return;
 
-            lines.forEach(line => {
-                const trimmed = line.trim();
-                if (trimmed === '') {
-                    creditItems.push({ type: 'space', size: 40 });
-                } else if (trimmed.startsWith('#')) {
-                    creditItems.push({ type: 'title', text: trimmed.replace(/^#\s*/, '').toUpperCase() });
-                } else if (trimmed.includes(':')) {
-                    const parts = trimmed.split(':');
-                    creditItems.push({ 
-                        type: 'pair', 
-                        label: parts[0].trim(), 
-                        value: parts[1].trim() 
-                    });
-                } else {
-                    if (trimmed === trimmed.toUpperCase() && trimmed.length > 3) {
-                        creditItems.push({ type: 'section', text: trimmed });
-                    } else {
-                        creditItems.push({ type: 'text', text: trimmed });
-                    }
-                }
-            });
-        }
-
-        function getSelectedColor() {
-            const val = colorSchemeSelect.value;
-            switch(val) {
-                case 'gold': return '#D4AF37';
-                case 'white': return '#FFFFFF';
-                case 'silver': return '#CCCCCC';
-                case 'cyan': return '#22D3EE';
-                default: return '#FFFFFF';
-            }
-        }
-
-        function calculateTotalScrollHeight() {
-            let height = 0;
-            creditItems.forEach(item => {
-                if (item.type === 'space') {
-                    height += item.size;
-                } else if (item.type === 'title') {
-                    height += 100;
-                } else if (item.type === 'section') {
-                    height += 70;
-                } else if (item.type === 'pair') {
-                    height += 55;
-                } else if (item.type === 'text') {
-                    height += 45;
-                }
-            });
-            return height;
-        }
-
-        function drawFrame(timeSec, totalDuration) {
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT);
-
-            const font = fontFamilySelect.value;
-            const color = getSelectedColor();
-            const progress = timeSec / totalDuration;
-            const style = animStyleSelect.value;
-
-            if (style === 'scroll') {
-                const totalHeight = calculateTotalScrollHeight();
-                const startY = VIDEO_HEIGHT + 100;
-                const endY = -totalHeight - 100;
-                const currentY = startY + (endY - startY) * progress;
-
-                let yTracker = currentY;
-
-                creditItems.forEach(item => {
-                    if (yTracker > -100 && yTracker < VIDEO_HEIGHT + 100) {
-                        renderItem(item, yTracker, font, color);
-                    }
-                    
-                    if (item.type === 'space') yTracker += item.size;
-                    else if (item.type === 'title') yTracker += 100;
-                    else if (item.type === 'section') yTracker += 70;
-                    else if (item.type === 'pair') yTracker += 55;
-                    else if (item.type === 'text') yTracker += 45;
-                });
-
-            } else if (style === 'fade') {
-                const pages = [];
-                let currentPage = [];
-                let elementCount = 0;
-
-                creditItems.forEach(item => {
-                    if (item.type === 'title' || item.type === 'section') {
-                        if (currentPage.length > 0) {
-                            pages.push(currentPage);
-                            currentPage = [];
-                        }
-                    }
-                    currentPage.push(item);
-                    if (item.type !== 'space') elementCount++;
-                    
-                    if (elementCount >= 5 && currentPage.length > 3) {
-                        pages.push(currentPage);
-                        currentPage = [];
-                        elementCount = 0;
-                    }
-                });
-                if (currentPage.length > 0) pages.push(currentPage);
-
-                const totalPages = pages.length;
-                if (totalPages === 0) return;
-
-                const secPerPage = totalDuration / totalPages;
-                const pageIndex = Math.min(Math.floor(timeSec / secPerPage), totalPages - 1);
-                const localProgress = (timeSec % secPerPage) / secPerPage;
-
-                let opacity = 1;
-                if (localProgress < 0.2) {
-                    opacity = localProgress / 0.2;
-                } else if (localProgress > 0.8) {
-                    opacity = (1 - localProgress) / 0.2;
-                }
-
-                const activePageItems = pages[pageIndex];
-                let pageHeight = 0;
-                activePageItems.forEach(item => {
-                    if (item.type === 'space') pageHeight += item.size;
-                    else if (item.type === 'title') pageHeight += 100;
-                    else if (item.type === 'section') pageHeight += 70;
-                    else if (item.type === 'pair') pageHeight += 55;
-                    else if (item.type === 'text') pageHeight += 45;
-                });
-
-                let startY = (VIDEO_HEIGHT - pageHeight) / 2 + 100;
-                ctx.save();
-                ctx.globalAlpha = opacity;
-                
-                activePageItems.forEach(item => {
-                    renderItem(item, startY, font, color);
-                    if (item.type === 'space') startY += item.size;
-                    else if (item.type === 'title') startY += 100;
-                    else if (item.type === 'section') startY += 70;
-                    else if (item.type === 'pair') startY += 55;
-                    else if (item.type === 'text') startY += 45;
-                });
-                ctx.restore();
-
-            } else if (style === 'starwars') {
-                drawStarfield(timeSec);
-
-                const totalHeight = calculateTotalScrollHeight();
-                const startY = VIDEO_HEIGHT * 0.1;
-                const endY = -totalHeight - 200;
-                const scrollY = startY + (endY - startY) * progress;
-
-                let yTracker = scrollY;
-
-                creditItems.forEach(item => {
-                    const z = 800 - (yTracker * 0.4);
-                    
-                    if (z > 50) {
-                        const scale = 500 / z;
-                        const screenX = VIDEO_WIDTH / 2;
-                        const screenY = (VIDEO_HEIGHT / 2) + (yTracker - VIDEO_HEIGHT / 2) * scale;
-
-                        if (screenY > 0 && screenY < VIDEO_HEIGHT + 100) {
-                            ctx.save();
-                            ctx.translate(screenX, screenY);
-                            ctx.scale(scale, scale);
-                            renderItemAtCenter(item, 0, font, color);
-                            ctx.restore();
-                        }
-                    }
-                    
-                    if (item.type === 'space') yTracker += item.size;
-                    else if (item.type === 'title') yTracker += 120;
-                    else if (item.type === 'section') yTracker += 80;
-                    else if (item.type === 'pair') yTracker += 60;
-                    else if (item.type === 'text') yTracker += 50;
-                });
-
-            } else if (style === 'minimal') {
-                const pairs = creditItems.filter(i => i.type === 'pair');
-                const titles = creditItems.filter(i => i.type === 'title');
-                
-                if (titles.length > 0) {
-                    ctx.textAlign = 'left';
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.font = `bold ${VIDEO_WIDTH * 0.045}px ${font}`;
-                    ctx.fillText(titles[0].text, VIDEO_WIDTH * 0.08, VIDEO_HEIGHT * 0.35);
-                    
-                    ctx.fillStyle = color;
-                    ctx.font = `${VIDEO_WIDTH * 0.016}px ${font}`;
-                    ctx.fillText("ZÁVEREČNÉ TITULKY FILMU", VIDEO_WIDTH * 0.08, VIDEO_HEIGHT * 0.42);
-                    
-                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(VIDEO_WIDTH * 0.08, VIDEO_HEIGHT * 0.48);
-                    ctx.lineTo(VIDEO_WIDTH * 0.35, VIDEO_HEIGHT * 0.48);
-                    ctx.stroke();
-                }
-
-                if (pairs.length > 0) {
-                    const activePairsCount = 6;
-                    const durationPerBatch = totalDuration / Math.ceil(pairs.length / activePairsCount);
-                    const batchIndex = Math.min(Math.floor(timeSec / durationPerBatch), Math.ceil(pairs.length / activePairsCount) - 1);
-                    const localProgress = (timeSec % durationPerBatch) / durationPerBatch;
-
-                    let opacity = 1;
-                    if (localProgress < 0.15) opacity = localProgress / 0.15;
-                    else if (localProgress > 0.85) opacity = (1 - localProgress) / 0.15;
-
-                    ctx.save();
-                    ctx.globalAlpha = opacity;
-                    
-                    const startIndex = batchIndex * activePairsCount;
-                    const endIndex = Math.min(startIndex + activePairsCount, pairs.length);
-                    
-                    let yPos = VIDEO_HEIGHT * 0.25;
-                    for (let i = startIndex; i < endIndex; i++) {
-                        const pair = pairs[i];
-                        
-                        ctx.textAlign = 'right';
-                        ctx.fillStyle = '#94A3B8';
-                        ctx.font = `${VIDEO_WIDTH * 0.02}px ${font}`;
-                        ctx.fillText(pair.label, VIDEO_WIDTH - (VIDEO_WIDTH * 0.35), yPos);
-
-                        ctx.textAlign = 'left';
-                        ctx.fillStyle = color;
-                        ctx.font = `bold ${VIDEO_WIDTH * 0.021}px ${font}`;
-                        ctx.fillText(pair.value, VIDEO_WIDTH - (VIDEO_WIDTH * 0.31), yPos);
-
-                        yPos += VIDEO_HEIGHT * 0.11;
-                    }
-                    ctx.restore();
-                }
-            }
-        }
-
-        function renderItem(item, y, font, color) {
-            ctx.textAlign = 'center';
-            const sizeRatio = VIDEO_WIDTH / 1920;
-            
-            if (item.type === 'title') {
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = `bold ${55 * sizeRatio}px ${font}`;
-                ctx.fillText(item.text, VIDEO_WIDTH / 2, y);
-            } else if (item.type === 'section') {
-                ctx.fillStyle = '#94A3B8';
-                ctx.font = `semibold ${26 * sizeRatio}px ${font}`;
-                ctx.fillText(item.text, VIDEO_WIDTH / 2, y);
-            } else if (item.type === 'text') {
-                ctx.fillStyle = '#CCCCCC';
-                ctx.font = `${30 * sizeRatio}px ${font}`;
-                ctx.fillText(item.text, VIDEO_WIDTH / 2, y);
-            } else if (item.type === 'pair') {
-                ctx.textAlign = 'right';
-                ctx.fillStyle = '#94A3B8';
-                ctx.font = `${28 * sizeRatio}px ${font}`;
-                ctx.fillText(item.label, VIDEO_WIDTH / 2 - (40 * sizeRatio), y);
-
-                ctx.textAlign = 'left';
-                ctx.fillStyle = color;
-                ctx.font = `bold ${30 * sizeRatio}px ${font}`;
-                ctx.fillText(item.value, VIDEO_WIDTH / 2 + (40 * sizeRatio), y);
-            }
-        }
-
-        function renderItemAtCenter(item, y, font, color) {
-            ctx.textAlign = 'center';
-            if (item.type === 'title') {
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = `bold 55px ${font}`;
-                ctx.fillText(item.text, 0, y);
-            } else if (item.type === 'section') {
-                ctx.fillStyle = '#94A3B8';
-                ctx.font = `bold 35px ${font}`;
-                ctx.fillText(item.text, 0, y);
-            } else if (item.type === 'text') {
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = `30px ${font}`;
-                ctx.fillText(item.text, 0, y);
-            } else if (item.type === 'pair') {
-                ctx.textAlign = 'right';
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = `30px ${font}`;
-                ctx.fillText(item.label, -30, y);
-
-                ctx.textAlign = 'left';
-                ctx.fillStyle = color;
-                ctx.font = `bold 30px ${font}`;
-                ctx.fillText(item.value, 30, y);
-            }
-        }
-
-        const stars = Array.from({ length: 150 }, () => ({
-            x: Math.random() * 1920,
-            y: Math.random() * 1080,
-            size: Math.random() * 2 + 0.5
-        }));
-
-        function drawStarfield(time) {
-            ctx.fillStyle = '#020205';
-            ctx.fillRect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT);
-            ctx.fillStyle = '#FFFFFF';
-            const scaleX = VIDEO_WIDTH / 1920;
-            const scaleY = VIDEO_HEIGHT / 1080;
-            stars.forEach(star => {
-                let z = star.size + (time * 0.2);
-                if (z > 3) z = 0.5;
-                ctx.fillRect(star.x * scaleX, star.y * scaleY, z, z);
-            });
-        }
-
-        function updatePreviewSettings() {
-            parseCreditsText();
-            if (!isPlaying) {
-                drawFrame(elapsedSeconds, parseFloat(durationInput.value));
-            }
-        }
-
-        function animatePreview(timestamp) {
-            if (!startTime) startTime = timestamp;
-            
-            if (isPlaying) {
-                const totalDuration = parseFloat(durationInput.value);
-                elapsedSeconds = ((timestamp - startTime) / 1000) % totalDuration;
-                
-                drawFrame(elapsedSeconds, totalDuration);
-                previewTimer.innerText = `${elapsedSeconds.toFixed(1)}s / ${totalDuration.toFixed(1)}s`;
-            }
-
-            animationFrameId = requestAnimationFrame(animatePreview);
-        }
-
-        function togglePreviewPlay() {
-            isPlaying = !isPlaying;
-            if (isPlaying) {
-                startTime = performance.now() - (elapsedSeconds * 1000);
-                playBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>`;
+            if (isAudioPlaying) {
+                stopUploadedAudio();
             } else {
-                playBtn.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>`;
+                playUploadedAudio();
             }
         }
 
-        function restartPreview() {
-            startTime = performance.now();
-            elapsedSeconds = 0;
-            if (!isPlaying) {
-                drawFrame(0, parseFloat(durationInput.value));
-                previewTimer.innerText = `0.0s / ${parseFloat(durationInput.value).toFixed(1)}s`;
+        function playUploadedAudio() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Vytvorenie zdroja zvuku
+            audioSourceNode = audioCtx.createBufferSource();
+            audioSourceNode.buffer = uploadedAudioBuffer;
+
+            // Pripojenie Analyzéra pre ekvalizér
+            audioAnalyser = audioCtx.createAnalyser();
+            audioAnalyser.fftSize = 64;
+
+            audioSourceNode.connect(audioAnalyser);
+            audioAnalyser.connect(audioCtx.destination);
+
+            audioSourceNode.start(0);
+            isAudioPlaying = true;
+            document.getElementById('playAudioBtn').innerHTML = `<i class="fa-solid fa-pause"></i>`;
+            document.getElementById('audioStatus').innerText = "Prehrávam";
+
+            // Spustenie spektrálneho vizualizéra
+            updateEqualizer();
+        }
+
+        function stopUploadedAudio() {
+            if (audioSourceNode) {
+                try {
+                    audioSourceNode.stop();
+                } catch(e) {}
+                audioSourceNode.disconnect();
+                audioSourceNode = null;
+            }
+            isAudioPlaying = false;
+            document.getElementById('playAudioBtn').innerHTML = `<i class="fa-solid fa-play"></i>`;
+            document.getElementById('audioStatus').innerText = "Pripravené";
+        }
+
+        function removeUploadedAudio() {
+            stopUploadedAudio();
+            uploadedAudioBuffer = null;
+            document.getElementById('audioUpload').value = "";
+            document.getElementById('playAudioBtn').disabled = true;
+            document.getElementById('removeAudioBtn').disabled = true;
+            document.getElementById('audioStatus').innerText = "Žiadny zvuk";
+        }
+
+        // SPEKTRÁLNY EKVALIZÉR (Holografické stĺpce)
+        function buildEqualizerBars() {
+            const container = document.getElementById('equalizerBars');
+            container.innerHTML = "";
+            for (let i = 0; i < 30; i++) {
+                const bar = document.createElement('div');
+                bar.className = "w-2 bg-gradient-to-t from-cyan-600 via-cyan-400 to-purple-500 rounded-t transition-all duration-75";
+                bar.style.height = "10%";
+                container.appendChild(bar);
             }
         }
 
-
-        // ==========================================================
-        // PROCES HĹBKOVÉHO UVAŽOVANIA S MODELMI (DEEP THINKING PROCESS)
-        // ==========================================================
-
-        function startDeepThinkingProcess() {
-            checkMembershipExpiration();
-
-            const audioMode = document.getElementById('audioDrone').value;
-            if (audioMode === 'custom' && !userAudioBuffer) {
-                openCustomModal("⚠️ Chýba audio súbor", "Zvolili ste možnosť vlastnej hudby, ale nenahrali ste žiadny hudobný súbor. Nahrajte súbor, alebo vyberte iný typ zvuku.");
+        function updateEqualizer() {
+            if (!isAudioPlaying || !audioAnalyser) {
+                // Reset stĺpcov
+                const bars = document.getElementById('equalizerBars').children;
+                for (let i = 0; i < bars.length; i++) {
+                    bars[i].style.height = "10%";
+                }
                 return;
             }
 
-            isPlaying = false;
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            const dataArray = new Uint8Array(audioAnalyser.frequencyBinCount);
+            audioAnalyser.getByteFrequencyData(dataArray);
 
-            let modelTitle = "Prebieha hĺbkové uvažovanie AI";
-            let modelSubtitle = "Základná bezplatná analýza dát...";
-            let customConsoleSteps = [];
-
-            if (selectedAIModel === 'free-v1') {
-                modelTitle = "Free model v1: Štandardné kódovanie";
-                modelSubtitle = "Spracovanie neobmedzeného 720p30 videa...";
-                customConsoleSteps = [
-                    { text: "⚡ Inicializujem Free model v1 Core Engine...", delay: 400 },
-                    { text: "🔍 Parzujem textové pole pre roly a mená (Štandardný parser)...", delay: 500 },
-                    { text: "⏳ Limitácia rozlíšenia: Nastavené na stabilných 1280x720...", delay: 450 },
-                    { text: "🎬 Generujem 720p snímky bez prídavného vyhladzovania...", delay: 600 },
-                    { text: "🔊 Pripravujem asynchrónny zapisovač audio-video toku...", delay: 500 }
-                ];
-            } else if (selectedAIModel === 'free-v1.1') {
-                modelTitle = "Free model v1.1: Optimalizovaný pohyb";
-                modelSubtitle = "Spracovanie neobmedzeného 720p30 videa s lepšou plynulosťou...";
-                customConsoleSteps = [
-                    { text: "⚡ Spúšťam Free model v1.1 s vyššou plynulosťou pohybu...", delay: 400 },
-                    { text: "🔍 Analýza plynulosti textu (Interpolácia snímok aktivovaná)...", delay: 500 },
-                    { text: "⏳ Limitácia rozlíšenia: Nastavené na stabilných 1280x720...", delay: 400 },
-                    { text: "🎬 Výpočet FPS sub-frames pre jemnejší sklz...", delay: 600 },
-                    { text: "🔊 Pripravujem asynchrónny zapisovač audio-video toku...", delay: 500 }
-                ];
-            } else if (selectedAIModel === 'premium-v2') {
-                modelTitle = "Cinema Pro v2: Pokročilé uvažovanie (1080p30)";
-                modelSubtitle = "Prémiové spracovanie Full HD 1080p30 s filmovými algoritmami...";
-                customConsoleSteps = [
-                    { text: "🚀 Aktivujem Cinema Pro v2 kognitívny procesor...", delay: 600 },
-                    { text: "🧠 ANALÝZA HLBKOVÉHO UVAŽOVANIA: Skenujem typografické uzly pre dokonalý kontrast v 1080p...", delay: 900 },
-                    { text: "🎨 Optimalizujem anti-aliasing pre vyhladzovanie písiem vo vysokom rozlíšení...", delay: 800 },
-                    { text: "🔊 Kalibrujem 1080p rendering plynulosti a synchronizujem 30 snímok za sekundu...", delay: 700 },
-                    { text: "✨ Generujem precízne matematické prechody a overujem IndexedDB členstvo...", delay: 600 }
-                ];
-            } else if (selectedAIModel === 'premium-v3') {
-                modelTitle = "Ultra Thinking v3: Priestorové uvažovanie (1080p30)";
-                modelSubtitle = "Prémiové spracovanie 1080p30 s plnou priestorovou 3D simuláciou...";
-                customConsoleSteps = [
-                    { text: "🌀 Aktivujem Ultra Thinking v3 hyper-dimenzionálny rendering...", delay: 500 },
-                    { text: "🧠 HLBKOVÉ UVAŽOVANIE: Prepočítavam perspektívu 3D hviezdneho prachu a goniometrických uhlov...", delay: 1000 },
-                    { text: "📐 Výpočet sub-vektorových deformácií textu pre maximálnu simuláciu dĺžky...", delay: 900 },
-                    { text: "🎵 Syntetizujem priestorovú hĺbku audio toku pre čistý mixdown...", delay: 800 },
-                    { text: "🚀 Všetky systémy sú pripravené na stabilný Full HD 1080p30 export...", delay: 500 }
-                ];
+            const bars = document.getElementById('equalizerBars').children;
+            for (let i = 0; i < bars.length; i++) {
+                // Výpočet výšky na základe frekvencie
+                const value = dataArray[i % dataArray.length];
+                const percent = Math.max(10, Math.min(100, (value / 255) * 100));
+                bars[i].style.height = `${percent}%`;
             }
 
-            document.getElementById('thinkingTitle').innerText = modelTitle;
-            document.getElementById('thinkingSubtitle').innerText = modelSubtitle;
-            overlay.classList.remove('hidden');
-            consoleElement.innerHTML = '';
-            progressBar.style.width = '0%';
-            renderPercentText.innerText = '0%';
+            requestAnimationFrame(updateEqualizer);
+        }
 
-            let lineIndex = 0;
+        // AKTIVÁCIA BEZPLATNÉHO PLÁNU
+        async function activateFreePlan() {
+            playSound('click');
+            userSubscription = {
+                active: false,
+                plan: 'Free',
+                expiryDate: null,
+                createdDate: new Date().toISOString()
+            };
+            await saveSubscriptionToDB(userSubscription);
+            checkSubscriptionStatus();
+            alertNotification("Aktivovaný bezplatný plán systému.", "success");
+        }
 
-            function printNextLine() {
-                if (lineIndex < customConsoleSteps.length) {
-                    const line = customConsoleSteps[lineIndex];
-                    const p = document.createElement('p');
-                    p.className = 'text-slate-300';
-                    p.innerHTML = `<span class="text-cinema-gold">✓</span> ${line.text}`;
-                    consoleElement.appendChild(p);
-                    consoleElement.scrollTop = consoleElement.scrollHeight;
+        // SPRACOVANIE PLATOBNEJ BRÁNY
+        function openPaymentGateway(planName, price, days) {
+            playSound('click');
+            pendingPlan = { name: planName, price: price, days: days };
+            document.getElementById('paymentPlanName').innerText = `${planName} (${days} dní)`;
+            document.getElementById('paymentAmountText').innerText = `${price.toFixed(2)} €`;
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
 
-                    playSynthClick();
+        function closePaymentGateway() {
+            document.getElementById('paymentModal').classList.add('hidden');
+            pendingPlan = null;
+        }
 
-                    lineIndex++;
-                    setTimeout(printNextLine, line.delay);
-                } else {
-                    renderAndEncodeVideo();
-                }
+        async function processPayment() {
+            if (!pendingPlan) return;
+
+            const expiry = new Date();
+            expiry.setDate(expiry.getDate() + pendingPlan.days);
+
+            userSubscription = {
+                active: true,
+                plan: pendingPlan.name,
+                expiryDate: expiry.toISOString(),
+                createdDate: new Date().toISOString()
+            };
+
+            await saveSubscriptionToDB(userSubscription);
+            checkSubscriptionStatus();
+            closePaymentGateway();
+
+            playSound('success');
+            alertNotification(`Kanál "${userSubscription.plan}" bol úspešne prepojený. Platnosť do ${expiry.toLocaleDateString()}.`, "success");
+        }
+
+        // ŠABLÓNY TITULKOV
+        function loadTemplate(type = 'classic') {
+            playSound('click');
+            let template = '';
+            if (type === 'sci-fi') {
+                template = `MEDZIGALAKTICKÁ RÉŽIA : Christopher Nolan
+HLAVNÝ KOZMICKÝ ARCHITEKT : Elon Musk
+
+AUTOR KVANTOVÉHO SCENÁRA : Jonathan Nolan
+PRODUCENTI ZO SÚHVEZDIA LYRA : Emma Thomas
+CHARLES ROVEN
+
+DYNAMICKÁ ORCHESTRÁLNA HUDBA : Hans Zimmer
+KOZMO-KAMERA : Hoyte van Hoytema
+
+V HLAVNÝCH ROLÁCH POSÁDKY
+Veliteľ Dom Cobb : Leonardo DiCaprio
+Kopilot Arthur : Joseph Gordon-Levitt
+Navigátorka Ariadne : Elliot Page
+Technik Eames : Tom Hardy
+Projekcia Mal Cobb : Marion Cotillard
+
+ŠPECIÁLNE PODAKOVANIE
+Kino nadšenci Slovenska
+Všetci podporovatelia CineCredits v2026`;
+            } else {
+                template = `RÉŽIA : Christopher Nolan
+SCENÁR : Christopher Nolan
+
+HLAVNÝ PRODUCENT : Emma Thomas
+PRODUCENT : Charles Roven
+
+HUDBA : Hans Zimmer
+KAMERA : Hoyte van Hoytema
+
+V HLAVNÝCH ROLÁCH
+Dom Cobb : Leonardo DiCaprio
+Arthur : Joseph Gordon-Levitt
+Ariadne : Elliot Page
+Eames : Tom Hardy
+Mal Cobb : Marion Cotillard
+Saito : Ken Watanabe
+
+ŠPECIÁLNE PODAKOVANIE
+Kino nadšenci Slovenska
+Všetci podporovatelia CineCredits v2026`;
+            }
+            document.getElementById('creditsText').value = template;
+            drawPreviewFrame();
+        }
+
+        function setTheme(theme) {
+            playSound('click');
+            activeTheme = theme;
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.className = "theme-btn border border-white/5 bg-slate-950/40 text-xs py-2 rounded-xl text-slate-400 transition-all font-medium font-cyber";
+            });
+            const selectedBtn = document.getElementById(`theme_${theme}`);
+            if (selectedBtn) {
+                selectedBtn.className = "theme-btn border border-cyan-500/40 bg-cyan-950/20 text-xs py-2 rounded-xl text-cyan-300 transition-all font-medium font-cyber shadow-[0_0_10px_rgba(6,182,212,0.15)]";
+            }
+            drawPreviewFrame();
+        }
+
+        // VYKRESLENIE NÁHĽADU
+        function drawPreviewFrame() {
+            const canvas = document.getElementById('movieCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = 1280;
+            canvas.height = 720;
+            
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const gradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 50, canvas.width/2, canvas.height/2, 600);
+            gradient.addColorStop(0, '#040712');
+            gradient.addColorStop(1, '#000000');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(6, 182, 212, 0.15)';
+            for(let i=0; i<20; i++) {
+                ctx.beginPath();
+                ctx.arc((i * 137) % canvas.width, (i * 83) % canvas.height, (i % 3) + 1, 0, Math.PI * 2);
+                ctx.fill();
             }
 
-            printNextLine();
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            
+            if (activeTheme === 'starwars') {
+                ctx.font = "bold 36px 'Cinzel', serif";
+                ctx.fillStyle = '#ffe81f';
+                ctx.fillText("STAR WARS REKONŠTRUKCIA", canvas.width / 2, canvas.height / 2 - 30);
+                ctx.font = "18px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText("Perspektívne 3D vykresľovanie pripravené", canvas.width / 2, canvas.height / 2 + 25);
+            } else if (activeTheme === 'neon_retro') {
+                ctx.font = "bold 32px 'Orbitron', sans-serif";
+                ctx.fillStyle = '#ec4899';
+                ctx.fillText("NEON RETRO NÉON", canvas.width / 2, canvas.height / 2 - 30);
+                ctx.font = "16px 'Orbitron', sans-serif";
+                ctx.fillStyle = '#06b6d4';
+                ctx.fillText("Kyberpunkový tón a svietivosť povolená", canvas.width / 2, canvas.height / 2 + 25);
+            } else {
+                ctx.font = "bold 28px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillText("FILMOVÉ TITULKY", canvas.width / 2, canvas.height / 2 - 25);
+                ctx.font = "16px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillStyle = '#64748b';
+                ctx.fillText("Kliknite na 'Spracovať & Stiahnuť Video'", canvas.width / 2, canvas.height / 2 + 20);
+            }
         }
 
-        function playSynthClick() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.05);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.05);
-            } catch(e) {}
-        }
+        // VIDEO GENERÁTOR (REÁLNE KRESLENIE A MP4 SŤAHOVANIE SO ZVUKOM)
+        async function startGeneration() {
+            if (isGenerating) return;
+            isGenerating = true;
 
+            const creditsText = document.getElementById('creditsText').value.trim();
+            if (!creditsText) {
+                alertNotification("Zadajte obsah záverečných titulkov!", "error");
+                isGenerating = false;
+                return;
+            }
 
-        // ==========================================================
-        // RENDER & ENKÓDOVANIE (720p vs 1080p PLNE ODBLOKOVANÝ EXPORT)
-        // ==========================================================
+            playSound('render_start');
 
-        async function renderAndEncodeVideo() {
-            const p = document.createElement('p');
-            p.className = 'text-yellow-400 font-bold';
-            p.innerHTML = `&gt; Spúšťam renderovanie snímok v rozlíšení ${VIDEO_WIDTH}x${VIDEO_HEIGHT}...`;
-            consoleElement.appendChild(p);
+            const model = document.getElementById('modelSelector').value;
+            const duration = parseInt(document.getElementById('animDuration').value);
+            const canvas = document.getElementById('movieCanvas');
+            const ctx = canvas.getContext('2d');
 
-            const duration = parseFloat(durationInput.value);
+            const isPremiumModel = model.startsWith('premium_') || model.includes('2027');
+            const is2027Model = model.includes('2027');
+            
+            // Nastavenie rozlíšenia na základe modelu
+            let width = 1280;
+            let height = 720;
+            if (is2027Model) {
+                width = 3840; // Real 4K
+                height = 2160;
+            } else if (isPremiumModel) {
+                width = 1920; // 1080p
+                height = 1080;
+            }
+
             const fps = 30;
             const totalFrames = duration * fps;
-            
-            // 1. Získanie video streamu z canvasu
-            const canvasStream = canvas.captureStream(fps);
-            let chunks = [];
 
-            // 2. Audio Web API spracovanie zvuku EŠTE PRED spustením MediaRecorderu
-            let audioCtx, dest;
-            const audioMode = document.getElementById('audioDrone').value;
-            let audioTracks = [];
+            canvas.width = width;
+            canvas.height = height;
 
-            if (audioMode !== 'none') {
-                try {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    dest = audioCtx.createMediaStreamDestination();
-                    
-                    const gainNode = audioCtx.createGain();
-                    gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                    
-                    if (audioMode === 'synth') {
-                        const osc = audioCtx.createOscillator();
-                        const filter = audioCtx.createBiquadFilter();
-                        
-                        osc.type = 'sawtooth';
-                        osc.frequency.value = 55;
-                        filter.type = 'lowpass';
-                        filter.frequency.value = 150;
-                        
-                        osc.connect(filter);
-                        filter.connect(gainNode);
-                        
-                        osc.start();
-                        osc.stop(audioCtx.currentTime + duration);
-                    } else if (audioMode === 'custom' && userAudioBuffer) {
-                        const bufferSource = audioCtx.createBufferSource();
-                        bufferSource.buffer = userAudioBuffer;
-                        bufferSource.connect(gainNode);
-                        
-                        bufferSource.start(0);
-                        bufferSource.stop(audioCtx.currentTime + duration);
-                    }
+            const overlay = document.getElementById('processingOverlay');
+            const percentText = document.getElementById('processingPercent');
+            const progressBar = document.getElementById('progressBar');
+            overlay.classList.remove('hidden');
 
-                    gainNode.connect(dest);
-                    
-                    // Plynulý fade-out na konci (stíšenie do stratena)
-                    gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime + duration - 2);
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                    
-                    audioTracks = dest.stream.getAudioTracks();
-                } catch(e) {
-                    console.error("Nepodarilo sa inicializovať zvuk:", e);
-                }
-            }
+            const thinkingLog = document.getElementById('thinkingLog');
+            thinkingLog.innerHTML = "";
 
-            // 3. Spojenie video stôp a audio stôp do JEDNÉHO kombinovaného streamu hneď na začiatku
-            let combinedStream;
-            if (audioTracks && audioTracks.length > 0) {
-                combinedStream = new MediaStream([
-                    ...stream.getVideoTracks(),
-                    ...audioTracks
-                ]);
-            } else {
-                combinedStream = stream;
-            }
-
-            // 4. Výber najlepšieho podporovaného formátu podľa prehliadača
-            let selectedMimeType = '';
-            let fileExtension = 'mp4';
-
-            const preferredTypes = [
-                'video/mp4;codecs=h264',
-                'video/mp4',
-                'video/webm;codecs=vp9',
-                'video/webm;codecs=vp8',
-                'video/webm'
+            // Hlboké uvažovanie vrátane dlhých 2027 úvah
+            const thoughts = is2027Model ? [
+                "[2027 QUANTUM-JADRO] Štartujem kvantový rendering v ultra-vysokom rozlíšení 4K...",
+                "[2027 QUANTUM-JADRO] Inicializujem 60-sekundový fázový koprocesor na potlačenie šumu.",
+                "[2027 QUANTUM-JADRO] Prepočítavam subpixelové vykreslenie textu pre 4K rozteč.",
+                "[2027 QUANTUM-JADRO] Simulujem dynamický spektrálny vizualizér (audio sync) v reálnom čase.",
+                "[2027 QUANTUM-JADRO] Detegujem audio oscilácie pre ideálnu kinematografickú kompozíciu.",
+                "[2027 QUANTUM-JADRO] Kreslím holografický prach s fyzikálnym kmitaním.",
+                "[2027 QUANTUM-JADRO] Dokončujem export do MP4 so zapuzdrenou audio stopou..."
+            ] : [
+                "Mapujem polia záverečných titulkov...",
+                "Hľadám rozloženie dvojíc v poli kľúč:hodnota.",
+                "Nastavujem optickú mriežku pre rozlíšenie " + width + "x" + height + "px.",
+                "Stabilizujem fyzikálny koprocesor scrollovania na snímkovanie 30 FPS.",
+                "Kalkulujem ideálne rozostupy písma s ohľadom na celkovú dĺžku animácie.",
+                "Spúšťam dynamický generátor vesmírneho šumu na pozadí.",
+                "Aplikujem subpixelové antialiasingové filtre pre čisté vykreslenie textu."
             ];
 
-            for (const mimeType of preferredTypes) {
-                if (MediaRecorder.isTypeSupported(mimeType)) {
-                    selectedMimeType = mimeType;
-                    break;
+            function addThought(text) {
+                const span = document.createElement('div');
+                span.className = is2027Model 
+                    ? "text-pink-400 border-l-2 border-pink-500 pl-3.5 py-0.5 animate-pulse" 
+                    : "text-purple-300 border-l-2 border-purple-500 pl-3.5 py-0.5 animate-pulse";
+                span.innerHTML = `&gt; <span class="text-slate-500 font-cyber text-[9px]">[THINKING]</span> ${text}`;
+                thinkingLog.appendChild(span);
+                thinkingLog.scrollTop = thinkingLog.scrollHeight;
+            }
+
+            const lines = creditsText.split('\n');
+            const parsedCredits = lines.map(line => {
+                if (line.includes(':')) {
+                    const parts = line.split(':');
+                    return { type: 'pair', role: parts[0].trim(), name: parts[1].trim() };
+                } else if (line.trim() === "") {
+                    return { type: 'space' };
+                } else {
+                    return { type: 'header', text: line.trim() };
                 }
+            });
+
+            // Ak prebieha prehrávanie, zastavíme ho, aby sme audio presmerovali priamo do nahrávania
+            if (isAudioPlaying) {
+                stopUploadedAudio();
             }
 
-            if (selectedMimeType.includes('mp4')) {
-                fileExtension = 'mp4';
-            } else {
-                fileExtension = 'webm';
+            let recordedChunks = [];
+            let canvasStream = canvas.captureStream(fps);
+            let combinedStream = new MediaStream();
+
+            // Pridanie videa do streamu
+            combinedStream.addTrack(canvasStream.getVideoTracks()[0]);
+
+            // Web Audio API a integrácia hudby priamo do sťahovaného videa
+            let destNode;
+            if (uploadedAudioBuffer) {
+                destNode = audioCtx.createMediaStreamDestination();
+                audioSourceNode = audioCtx.createBufferSource();
+                audioSourceNode.buffer = uploadedAudioBuffer;
+                
+                audioSourceNode.connect(destNode);
+                
+                // Tiež chceme aby používateľ počul zvuk počas generovania
+                audioSourceNode.connect(audioCtx.destination);
+                
+                // Pridanie audio tracku do nahrávacieho streamu
+                const audioTracks = destNode.stream.getAudioTracks();
+                if (audioTracks.length > 0) {
+                    combinedStream.addTrack(audioTracks[0]);
+                }
+                
+                audioSourceNode.start(0);
+                isAudioPlaying = true;
             }
 
-            const pFormat = document.createElement('p');
-            pFormat.className = 'text-blue-400 text-[10px]';
-            pFormat.innerText = `[Formát] Vybraný kodek: ${selectedMimeType || "Predvolený"} (.${fileExtension})`;
-            consoleElement.appendChild(pFormat);
-
-            let options = selectedMimeType ? { mimeType: selectedMimeType } : {};
-            let recorder;
-
+            let mediaRecorder;
             try {
-                recorder = new MediaRecorder(combinedStream, options);
-            } catch (e) {
-                console.warn("Vybraný kodek zlyhal, prepínam na bezpečný fallback:", e);
-                recorder = new MediaRecorder(combinedStream);
-                fileExtension = 'webm';
+                let options = { mimeType: 'video/mp4; codecs=vp9' };
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options = { mimeType: 'video/webm; codecs=vp9' };
+                }
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options = { mimeType: 'video/webm' };
+                }
+                mediaRecorder = new MediaRecorder(combinedStream, options);
+            } catch(e) {
+                console.warn("Záložný kodek rekordéra:", e);
+                mediaRecorder = new MediaRecorder(combinedStream);
             }
 
-            recorder.ondataavailable = (e) => {
+            mediaRecorder.ondataavailable = function(e) {
                 if (e.data && e.data.size > 0) {
-                    chunks.push(e.data);
+                    recordedChunks.push(e.data);
                 }
             };
 
-            recorder.onstop = () => {
-                if (audioCtx) {
-                    try { audioCtx.close(); } catch(err) {}
-                }
-                finalizeExport(chunks, selectedMimeType || 'video/webm', fileExtension);
-            };
+            mediaRecorder.start();
 
-            recorder.start();
+            let frame = 0;
 
-            let currentFrame = 0;
-
-            function renderNextFrame() {
-                if (currentFrame <= totalFrames) {
-                    const time = currentFrame / fps;
+            async function renderLoop() {
+                if (frame >= totalFrames) {
+                    mediaRecorder.stop();
+                    if (audioSourceNode) {
+                        try { audioSourceNode.stop(); } catch(e) {}
+                        isAudioPlaying = false;
+                    }
                     
-                    drawFrame(time, duration);
+                    mediaRecorder.onstop = function() {
+                        const blob = new Blob(recordedChunks, { type: 'video/mp4' });
+                        const videoURL = URL.createObjectURL(blob);
+                        
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = videoURL;
+                        downloadLink.download = `CineCredits_${model}_${width}p.mp4`;
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
 
-                    const progressPercent = Math.min(Math.round((currentFrame / totalFrames) * 100), 100);
-                    progressBar.style.width = `${progressPercent}%`;
-                    renderPercentText.innerText = `${progressPercent}%`;
+                        overlay.classList.add('hidden');
+                        isGenerating = false;
+                        document.getElementById('renderingStatus').innerText = "Hotovo / Sťahujem";
+                        playSound('render_end');
+                        alertNotification("Video bolo úspešne vygenerované a stiahnuté s audio stopou!", "success");
+                        drawPreviewFrame();
+                    };
+                    return;
+                }
 
-                    if (currentFrame % 15 === 0) {
-                        const frameLog = document.createElement('p');
-                        frameLog.className = 'text-slate-400 text-[10px]';
-                        frameLog.innerText = `[Render] Snímka ${currentFrame}/${totalFrames} | Sekunda: ${time.toFixed(1)}s / ${duration}s`;
-                        consoleElement.appendChild(frameLog);
-                        consoleElement.scrollTop = consoleElement.scrollHeight;
+                if (isPremiumModel && frame % 45 === 0) {
+                    const thoughtIdx = Math.floor(frame / 45) % thoughts.length;
+                    addThought(thoughts[thoughtIdx]);
+                }
+
+                const progressPercent = Math.round((frame / totalFrames) * 100);
+                percentText.innerText = `Snímka ${frame} z ${totalFrames} (${progressPercent}%)`;
+                progressBar.style.width = `${progressPercent}%`;
+                document.getElementById('renderingStatus').innerText = `Renderujem ${progressPercent}%`;
+
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, width, height);
+
+                const gradient = ctx.createRadialGradient(width/2, height/2, 50, width/2, height/2, width * 0.7);
+                gradient.addColorStop(0, '#03050c');
+                gradient.addColorStop(1, '#000000');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+
+                // Kybernetický prach
+                ctx.fillStyle = 'rgba(6, 182, 212, 0.15)';
+                for(let i=0; i<35; i++) {
+                    const x = (i * 383 + frame * (i % 3 + 1) * 0.15) % width;
+                    const y = (i * 193 - frame * 0.4) % height;
+                    ctx.beginPath();
+                    ctx.arc(x, y < 0 ? height + y : y, (i % 3) + 1, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.fillStyle = '#ffffff';
+                
+                if (activeTheme === 'classic') {
+                    const totalScrollHeight = parsedCredits.length * 52 + height;
+                    const currentY = height - (frame / totalFrames) * totalScrollHeight;
+
+                    let currentOffset = currentY;
+                    parsedCredits.forEach(item => {
+                        if (item.type === 'header') {
+                            ctx.font = `bold ${width * 0.024}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = '#ffffff';
+                            ctx.textAlign = 'center';
+                            ctx.fillText(item.text, width / 2, currentOffset);
+                            currentOffset += 48;
+                        } else if (item.type === 'pair') {
+                            ctx.textAlign = 'right';
+                            ctx.font = `${width * 0.019}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = '#94a3b8';
+                            ctx.fillText(item.role, width / 2 - 30, currentOffset);
+
+                            ctx.textAlign = 'left';
+                            ctx.font = `bold ${width * 0.019}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillText(item.name, width / 2 + 30, currentOffset);
+                            currentOffset += 44;
+                        } else if (item.type === 'space') {
+                            currentOffset += 38;
+                        }
+                    });
+
+                } else if (activeTheme === 'starwars') {
+                    ctx.save();
+                    const progress = frame / totalFrames;
+                    const startY = height - progress * (parsedCredits.length * 48 + height);
+
+                    let currentOffset = startY;
+                    parsedCredits.forEach(item => {
+                        const distFromCenter = currentOffset / height;
+                        const scale = Math.max(0.3, 1.25 - distFromCenter * 0.85);
+                        
+                        if (currentOffset > -100 && currentOffset < height + 100) {
+                            ctx.fillStyle = `rgba(255, 232, 31, ${scale})`;
+                            ctx.textAlign = 'center';
+                            
+                            if (item.type === 'header') {
+                                                    ctx.font = `bold ${width * 0.026 * scale}px 'Cinzel', serif`;
+                                ctx.fillText(item.text.toUpperCase(), width / 2, currentOffset);
+                            } else if (item.type === 'pair') {
+                                ctx.font = `bold ${width * 0.019 * scale}px 'Cinzel', serif`;
+                                ctx.fillText(`${item.role} : ${item.name}`, width / 2, currentOffset);
+                            }
+                        }
+                        currentOffset += 48 * scale;
+                    });
+                    ctx.restore();
+
+                } else if (activeTheme === 'neon_retro') {
+                    // RETRO NEON ANIMÁCIA
+                    const totalScrollHeight = parsedCredits.length * 52 + height;
+                    const currentY = height - (frame / totalFrames) * totalScrollHeight;
+
+                    let currentOffset = currentY;
+                    parsedCredits.forEach(item => {
+                        if (item.type === 'header') {
+                            ctx.font = `bold ${width * 0.024}px 'Orbitron', sans-serif`;
+                            ctx.fillStyle = '#ec4899';
+                            ctx.shadowColor = '#ec4899';
+                            ctx.shadowBlur = 10;
+                            ctx.textAlign = 'center';
+                            ctx.fillText(item.text.toUpperCase(), width / 2, currentOffset);
+                            ctx.shadowBlur = 0; // reset
+                            currentOffset += 48;
+                        } else if (item.type === 'pair') {
+                            ctx.textAlign = 'right';
+                            ctx.font = `${width * 0.019}px 'Orbitron', sans-serif`;
+                            ctx.fillStyle = '#06b6d4';
+                            ctx.shadowColor = '#06b6d4';
+                            ctx.shadowBlur = 8;
+                            ctx.fillText(item.role, width / 2 - 30, currentOffset);
+
+                            ctx.textAlign = 'left';
+                            ctx.font = `bold ${width * 0.019}px 'Orbitron', sans-serif`;
+                            ctx.fillStyle = '#ffffff';
+                            ctx.shadowBlur = 0;
+                            ctx.fillText(item.name, width / 2 + 30, currentOffset);
+                            currentOffset += 44;
+                        } else if (item.type === 'space') {
+                            currentOffset += 38;
+                        }
+                    });
+
+                } else if (activeTheme === 'split_column') {
+                    // SPLIT COLUMN (ROZDELENÉ STĹPCE)
+                    const totalItems = parsedCredits.filter(i => i.type !== 'space').length;
+                    const itemDuration = totalFrames / totalItems;
+                    const currentIndex = Math.floor(frame / itemDuration);
+                    const currentItem = parsedCredits.filter(i => i.type !== 'space')[currentIndex];
+
+                    if (currentItem) {
+                        const frameInItem = frame % itemDuration;
+                        let transitionProgress = 1.0;
+
+                        // Slide in and Slide out logic
+                        if (frameInItem < itemDuration * 0.2) {
+                            transitionProgress = frameInItem / (itemDuration * 0.2);
+                        } else if (frameInItem > itemDuration * 0.8) {
+                            transitionProgress = (itemDuration - frameInItem) / (itemDuration * 0.2);
+                        }
+
+                        ctx.textAlign = 'center';
+                        if (currentItem.type === 'header') {
+                            ctx.font = `bold ${width * 0.035}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = `rgba(255, 255, 255, ${transitionProgress})`;
+                            ctx.fillText(currentItem.text, width / 2, height / 2);
+                        } else if (currentItem.type === 'pair') {
+                            // Rola prichádza zľava
+                            ctx.textAlign = 'right';
+                            ctx.font = `${width * 0.024}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = `rgba(148, 163, 184, ${transitionProgress})`;
+                            const roleX = (width / 2 - 40) - (1 - transitionProgress) * 100;
+                            ctx.fillText(currentItem.role, roleX, height / 2);
+
+                            // Meno prichádza sprava
+                            ctx.textAlign = 'left';
+                            ctx.font = `bold ${width * 0.024}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = `rgba(255, 255, 255, ${transitionProgress})`;
+                            const nameX = (width / 2 + 40) + (1 - transitionProgress) * 100;
+                            ctx.fillText(currentItem.name, nameX, height / 2);
+                        }
                     }
 
-                    currentFrame++;
-                    setTimeout(renderNextFrame, 1000 / fps);
-                } else {
-                    const pCompiling = document.createElement('p');
-                    pCompiling.className = 'text-amber-400 font-bold animate-pulse';
-                    pCompiling.innerText = `⌛ Finalizujem kódovanie, generujem video dáta...`;
-                    consoleElement.appendChild(pCompiling);
-                    consoleElement.scrollTop = consoleElement.scrollHeight;
-                    
-                    setTimeout(() => {
-                        recorder.stop();
-                    }, 500);
+                } else if (activeTheme === 'fade') {
+                    const totalItems = parsedCredits.filter(i => i.type !== 'space').length;
+                    const itemDuration = totalFrames / totalItems;
+                    const currentIndex = Math.floor(frame / itemDuration);
+                    const currentItem = parsedCredits.filter(i => i.type !== 'space')[currentIndex];
+
+                    if (currentItem) {
+                        const frameInItem = frame % itemDuration;
+                        let opacity = 1.0;
+                        
+                        if (frameInItem < itemDuration * 0.25) {
+                            opacity = frameInItem / (itemDuration * 0.25);
+                        } else if (frameInItem > itemDuration * 0.75) {
+                            opacity = (itemDuration - frameInItem) / (itemDuration * 0.25);
+                        }
+
+                        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                        ctx.textAlign = 'center';
+
+                        if (currentItem.type === 'header') {
+                            ctx.font = `bold ${width * 0.038}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillText(currentItem.text, width / 2, height / 2);
+                        } else if (currentItem.type === 'pair') {
+                            ctx.font = `${width * 0.024}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = `rgba(148, 163, 184, ${opacity})`;
+                            ctx.fillText(currentItem.role, width / 2, height / 2 - 35);
+                            
+                            ctx.font = `bold ${width * 0.03}px 'Plus Jakarta Sans', sans-serif`;
+                            ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                            ctx.fillText(currentItem.name, width / 2, height / 2 + 35);
+                        }
+                    }
                 }
-            }
 
-            renderNextFrame();
-        }
+                if (!isPremiumModel) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                    ctx.font = "12px 'Orbitron', sans-serif";
+                    ctx.textAlign = 'right';
+                    ctx.fillText("CineCredits FREE v1.0", width - 20, height - 20);
+                }
 
-        // Uloženie súboru a automatické jednorazové stiahnutie
-        function finalizeExport(chunks, mimeType, fileExtension) {
-            const finalLog = document.createElement('p');
-            finalLog.className = 'text-emerald-400 font-bold';
-            finalLog.innerHTML = `✓ Video bolo úspešne skompilované a uložené!`;
-            consoleElement.appendChild(finalLog);
-            consoleElement.scrollTop = consoleElement.scrollHeight;
-
-            const blob = new Blob(chunks, { type: mimeType });
-            
-            if (blob.size === 0) {
-                console.error("Chyba: Výsledné video má veľkosť 0 bajtov. Opakujem pokus so základným typom...");
-                const fallbackBlob = new Blob(chunks, { type: 'video/webm' });
-                triggerDownload(fallbackBlob, 'webm');
-            } else {
-                triggerDownload(blob, fileExtension);
+                frame++;
+                requestAnimationFrame(renderLoop);
             }
 
             setTimeout(() => {
-                overlay.classList.add('hidden');
-                
-                isPlaying = true;
-                startTime = performance.now();
-                animatePreview();
-
-                openCustomModal(
-                    "✓ Spracovanie úspešné", 
-                    `Vaše video bolo úspešne vygenerované pomocou modelu '${selectedAIModel}' v kvalite ${VIDEO_HEIGHT}p30 a automaticky stiahnuté do vášho zariadenia s príponou .${fileExtension}.`
-                );
-            }, 1200);
+                renderLoop();
+            }, 800);
         }
 
-        function triggerDownload(blob, fileExtension) {
-            const videoUrl = URL.createObjectURL(blob);
-            const downloadLink = document.createElement('a');
-            downloadLink.href = videoUrl;
-            downloadLink.download = `filmove_titulky_${VIDEO_HEIGHT}p30_${Date.now()}.${fileExtension}`;
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-            
+        function alertNotification(message, type = "info") {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 left-4 z-50 px-6 py-4 rounded-2xl border font-semibold text-xs transition-all duration-300 shadow-xl flex items-center gap-3 backdrop-blur-xl ${
+                type === 'success' ? 'bg-cyan-950/90 border-cyan-500/30 text-cyan-300' : 'bg-red-950/90 border-red-500/30 text-red-300'
+            }`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation'} text-md"></i> <span>${message}</span>`;
+            document.body.appendChild(toast);
             setTimeout(() => {
-                URL.revokeObjectURL(videoUrl);
-            }, 3000);
+                toast.style.opacity = '0';
+                setTimeout(() => document.body.removeChild(toast), 500);
+            }, 4500);
         }
 
-        function openCustomModal(title, text) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalBody').innerText = text;
-            document.getElementById('customModal').classList.remove('hidden');
-        }
-
-        function closeCustomModal() {
-            document.getElementById('customModal').classList.add('hidden');
+        function scrollToPricing() {
+            document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
